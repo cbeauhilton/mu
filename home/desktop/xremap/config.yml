@@ -1,0 +1,18 @@
+modmap:
+  - name: Except Chrome
+    application:
+      not: Google-chrome
+    remap:
+      CapsLock: 
+        held: Super_L
+        alone: Esc
+        alone_timeout_millis: 150
+#
+keymap:
+  - name: Google Search
+    application:
+      only: Google-chrome
+    remap:
+      Super-o: C-Shift-tab
+      Super-p: C-tab
+      Super-s: C-f
