@@ -1,11 +1,13 @@
 {
   config,
   pkgs,
+  inputs,
   ...
 }: {
   imports = [
     ./home
   ];
+
   home.username = "beau";
   home.homeDirectory = "/home/beau";
 
@@ -25,18 +27,15 @@
   # '';
 
   # set cursor size and dpi for 4k monitor
-  xresources.properties = {
-    "Xcursor.size" = 16;
-    "Xft.dpi" = 172;
-  };
+  # xresources.properties = {
+  #   "Xcursor.size" = 16;
+  #   "Xft.dpi" = 172;
+  # };
 
   # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
-    # here is some command line tools I use frequently
-    # feel free to add your own or remove some of them
-
     neofetch
-    nnn # terminal file manager
+    nnn
 
     # archives
     zip
@@ -62,20 +61,18 @@
     ipcalc # it is a calculator for the IPv4/v6 addresses
 
     # misc
+    age
     cowsay
     file
-    which
-    tree
+    gawk
+    gnupg
     gnused
     gnutar
-    gawk
+    tree
+    which
     zstd
-    gnupg
 
     # nix related
-    #
-    # it provides the command `nom` works just like `nix`
-    # with more details log output
     nix-output-monitor
 
     # productivity
@@ -97,6 +94,9 @@
     ethtool
     pciutils # lspci
     usbutils # lsusb
+    # inputs.ags.packages.${pkgs.system}.io
+    # inputs.ags.packages.${pkgs.system}.notifd
+    # inputs.ags.packages.${pkgs.system}.hyprland
   ];
 
   # basic configuration of git, please change to your own
@@ -182,29 +182,18 @@
       export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
     '';
 
-    # set some aliases, feel free to add more or remove some
     shellAliases = {
-      k = "kubectl";
       urldecode = "python3 -c 'import sys, urllib.parse as ul; print(ul.unquote_plus(sys.stdin.read()))'";
       urlencode = "python3 -c 'import sys, urllib.parse as ul; print(ul.quote_plus(sys.stdin.read()))'";
     };
   };
+
   programs.zsh = {
     enable = true;
     enableCompletion = true;
     autosuggestion.enable = true;
   };
 
-  # This value determines the home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update home Manager without changing this value. See
-  # the home Manager release notes for a list of state version
-  # changes in each release.
   home.stateVersion = "23.11";
-
-  # Let home Manager install and manage itself.
   programs.home-manager.enable = true;
 }

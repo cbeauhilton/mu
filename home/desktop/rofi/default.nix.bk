@@ -1,0 +1,17 @@
+{pkgs, ...}: {
+  programs.rofi = {
+    enable = true;
+    font = "IBM Plex Mono 15";
+    # theme = "gruvbox-dark-hard";
+    cycle = true;
+    package = pkgs.rofi.override {plugins = [pkgs.rofi-wayland];};
+    terminal = "\${pkgs.alacritty}/bin/alacritty";
+    extraConfig = {
+      modi = "drun,ssh";
+      kb-primary-paste = "Control+V,Shift+Insert";
+      kb-secondary-paste = "Control+v,Insert";
+      show-icons = true;
+      hide-scrollbar = true;
+    };
+  };
+}

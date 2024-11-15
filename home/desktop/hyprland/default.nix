@@ -13,10 +13,6 @@
     xremap --watch .config/xremap/config.yml &
   '';
 in {
-  # imports = [
-  #   ../waybar
-  # ];
-
   home.packages = with pkgs; [
     wl-clipboard
     grim
@@ -24,6 +20,9 @@ in {
     inputs.hyprland-contrib.packages.x86_64-linux.grimblast
     neofetch
     wofi-emoji
+    wezterm
+    swww
+    mako
   ];
 
   programs.wofi = {
@@ -44,12 +43,16 @@ in {
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     plugins = [
       inputs.hyprsplit.packages.${pkgs.system}.hyprsplit
+      inputs.hyprgrass.packages.${pkgs.system}.default
+      inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
     ];
-    xwayland.enable = true;
+    # xwayland.enable = true;
     settings = {
       exec-once = ''${startupScript}/bin/start'';
       input = {
         follow_mouse = 1;
+        natural_scroll = true;
+        touchpad.natural_scroll = true;
       };
       monitor = [
         "DP-3,preferred,0x0,1,transform,1"
@@ -66,23 +69,24 @@ in {
       };
       decoration = {
         rounding = "10";
-        # blur = [
-        #   "enabled = true"
-        # ];
-        # "blur.size" = 3;
-        # "blur.passes" = 1;
-        # "blur.new_optimizations" = true;
-        # drop_shadow = true;
-        # shadow_range = 4;
-        # shadow_render_power = 3;
-        # "col.shadow" = "rgba(1a1a1aee)";
         active_opacity = 1.0;
         inactive_opacity = 0.9;
+        blur = {
+          enabled = true;
+          size = 3;
+          passes = 1;
+          new_optimizations = true;
+        };
+        shadow = {
+          enabled = false; # default: true
+          range = 4; # default: 4
+          render_power = 3; # default: 3
+          color = "rgba(1a1a1aee)";
+        };
       };
       master = {
         new_status = "master";
         orientation = "left";
-        # no_gaps_when_only = 1;
       };
       misc = {
         disable_hyprland_logo = true;
@@ -94,6 +98,21 @@ in {
       env = [
         "GDK_SCALE,2"
         "XCURSOR_SIZE,24"
+      ];
+
+      workspace = [
+        "w[t1], gapsout:0, gapsin:0"
+        "w[tg1], gapsout:0, gapsin:0"
+        "f[1], gapsout:0, gapsin:0"
+      ];
+
+      windowrulev2 = [
+        "bordersize 0, floating:0, onworkspace:w[t1]"
+        "rounding 0, floating:0, onworkspace:w[t1]"
+        "bordersize 0, floating:0, onworkspace:w[tg1]"
+        "rounding 0, floating:0, onworkspace:w[tg1]"
+        "bordersize 0, floating:0, onworkspace:f[1]"
+        "rounding 0, floating:0, onworkspace:f[1]"
       ];
       animations = {
         enabled = true;
@@ -124,9 +143,9 @@ in {
         "$mainMod, f, fullscreen, 1"
         "$mainMod SHIFT, f, fullscreen, 0"
         "$mainMod, d, exec, rofi -show drun"
-        "$mainMod, r, exec, wezterm-gui start --always-new-process yazi"
+        "$mainMod, r, exec, alacritty -e yazi"
         "$mainMod SHIFT, r, exec, thunar"
-        "$mainMod, m, exec, wezterm-gui start --always-new-process ncmpcpp"
+        "$mainMod, m, exec, alacritty -e ncmpcpp"
         "$mainMod, t, togglefloating,"
         "$mainMod CTRL, t, togglespecialworkspace, term"
         "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
@@ -148,36 +167,36 @@ in {
         "$mainMod SHIFT, u, layoutmsg, orientationcycle left top"
 
         # Grab rogue windows (e.g. after unplugging monitor)
-        "$mainMod, G, split:grabroguewindows"
+        # "$mainMod, G, split:grabroguewindows"
 
         # Switch workspaces with mainMod + [0-9]
-        "$mainMod, 1, split:workspace, 1"
-        "$mainMod, 2, split:workspace, 2"
-        "$mainMod, 3, split:workspace, 3"
-        "$mainMod, 4, split:workspace, 4"
-        "$mainMod, 5, split:workspace, 5"
-        "$mainMod, 6, split:workspace, 6"
-        "$mainMod, 7, split:workspace, 7"
-        "$mainMod, 8, split:workspace, 8"
-        "$mainMod, 9, split:workspace, 9"
-        "$mainMod, 0, split:workspace, 10"
+        # "$mainMod, 1, split:workspace, 1"
+        # "$mainMod, 2, split:workspace, 2"
+        # "$mainMod, 3, split:workspace, 3"
+        # "$mainMod, 4, split:workspace, 4"
+        # "$mainMod, 5, split:workspace, 5"
+        # "$mainMod, 6, split:workspace, 6"
+        # "$mainMod, 7, split:workspace, 7"
+        # "$mainMod, 8, split:workspace, 8"
+        # "$mainMod, 9, split:workspace, 9"
+        # "$mainMod, 0, split:workspace, 10"
 
         # Move active window to a workspace with mainMod + SHIFT + [0-9]
         # "movetoworkspacesilent" means "don't autoswitch to the workspace you just moved the active window to"
-        "$mainMod SHIFT, 1, split:movetoworkspacesilent, 1"
-        "$mainMod SHIFT, 2, split:movetoworkspacesilent, 2"
-        "$mainMod SHIFT, 3, split:movetoworkspacesilent, 3"
-        "$mainMod SHIFT, 4, split:movetoworkspacesilent, 4"
-        "$mainMod SHIFT, 5, split:movetoworkspacesilent, 5"
-        "$mainMod SHIFT, 6, split:movetoworkspacesilent, 6"
-        "$mainMod SHIFT, 7, split:movetoworkspacesilent, 7"
-        "$mainMod SHIFT, 8, split:movetoworkspacesilent, 8"
-        "$mainMod SHIFT, 9, split:movetoworkspacesilent, 9"
-        "$mainMod SHIFT, 0, split:movetoworkspacesilent, 10"
+        # "$mainMod SHIFT, 1, split:movetoworkspacesilent, 1"
+        # "$mainMod SHIFT, 2, split:movetoworkspacesilent, 2"
+        # "$mainMod SHIFT, 3, split:movetoworkspacesilent, 3"
+        # "$mainMod SHIFT, 4, split:movetoworkspacesilent, 4"
+        # "$mainMod SHIFT, 5, split:movetoworkspacesilent, 5"
+        # "$mainMod SHIFT, 6, split:movetoworkspacesilent, 6"
+        # "$mainMod SHIFT, 7, split:movetoworkspacesilent, 7"
+        # "$mainMod SHIFT, 8, split:movetoworkspacesilent, 8"
+        # "$mainMod SHIFT, 9, split:movetoworkspacesilent, 9"
+        # "$mainMod SHIFT, 0, split:movetoworkspacesilent, 10"
 
         # Scroll through existing workspaces with mainMod + scroll
-        "$mainMod, mouse_down, split:workspace, e+1"
-        "$mainMod, mouse_up, split:workspace, e-1"
+        # "$mainMod, mouse_down, split:workspace, e+1"
+        # "$mainMod, mouse_up, split:workspace, e-1"
 
         # focus monitor
         "$mainMod, bracketleft, focusmonitor, -1"

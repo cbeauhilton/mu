@@ -4,11 +4,19 @@
 {
   config,
   pkgs,
+  inputs,
   ...
 }: {
   imports = [
-    # Include the results of the hardware scan.
+    inputs.sops-nix.nixosModules.sops
     ./hardware-configuration.nix
+  ];
+
+  sops.defaultSopsFile = ./secrets/secrets.yaml;
+  sops.defaultSopsFormat = "yaml";
+  sops.age.keyFile = "/home/beau/.config/sops/age/keys.txt";
+  sops.age.sshKeyPaths = [
+    "/home/beau/.ssh/id_ed25519"
   ];
 
   # Bootloader.
@@ -45,6 +53,7 @@
 
   services.xserver.enable = true;
   security.pam.services.gdm.enableGnomeKeyring = true;
+  security.sudo.wheelNeedsPassword = false;
   console = {
     useXkbConfig = true; # use xkbOptions in tty.
   };
@@ -67,8 +76,16 @@
   xdg.portal.wlr.enable = true;
   xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk];
   security.rtkit.enable = true;
+  programs.nix-ld.enable = true;
+  # programs.nix-ld = {
+  #   libraries = pkgs.steam-run.fhsenv.args.multiPkgs pkgs;
+  # };
+
+  programs.virt-manager.enable = true;
   programs.hyprland = {
     enable = true;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    xwayland.enable = true;
   };
   services.pipewire = {
     enable = true;
@@ -81,16 +98,24 @@
   hardware.uinput.enable = true; # req for xremap
   users.groups.uinput.members = ["beau"]; # req for xremap
   users.groups.input.members = ["beau"]; # req for xremap # services.libinput.enable = true;
+  users.defaultUserShell = pkgs.zsh;
+  programs.zsh.enable = true;
+  services.libinput = {
+    enable = true;
+    touchpad.naturalScrolling = true;
+  };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.beau = {
     isNormalUser = true;
     description = "beau";
-    extraGroups = ["networkmanager" "wheel" "audio" "pipewire"];
-    packages = with pkgs; [
-      # firefox
-      #  thunderbird
-    ];
+    extraGroups = ["networkmanager" "wheel" "audio" "pipewire" "libvirtd"];
+    # dconf.settings = {
+    #   "org/virt-manager/virt-manager/connections" = {
+    #     autoconnect = [ "qemu:///system" ];
+    #     uris = [ "qemu:///system" ];
+    #   };
+    # };
   };
 
   # Enable automatic login for the user.
@@ -106,12 +131,16 @@
   environment.variables.EDITOR = "nvim";
   environment.sessionVariables = {
     FLAKE = "/home/beau/src/nixos";
+    NIXOS_OZONE_WL = "1";
   };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    sops
+    code-cursor
+    networkmanagerapplet
     neovim
+    bun
     wget
     curl
     alacritty
@@ -122,24 +151,13 @@
     git
     bitwarden-cli
   ];
+
   ### tailscale
-  # Tailscale auto-auth config, based on:
-  # https://tailscale.com/blog/nixos-minecraft/
-  #
   services.tailscale.enable = true;
   # always allow traffic from your Tailscale network
   networking.firewall.trustedInterfaces = ["tailscale0"];
   # allow the Tailscale UDP port through the firewall
   networking.firewall.allowedUDPPorts = [config.services.tailscale.port];
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
@@ -150,12 +168,44 @@
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
+  fonts.packages = with pkgs; [
+    (nerdfonts.override {
+      fonts = [
+        "IBMPlexMono"
+        "Hack"
+        "FiraCode"
+      ];
+    })
+    ibm-plex
+  ];
+
+  virtualisation = {
+    libvirtd = {
+      enable = true;
+      qemu = {
+        package = pkgs.qemu_kvm;
+        swtpm.enable = true;
+        ovmf.enable = true;
+        ovmf.packages = [pkgs.OVMFFull.fd];
+      };
+    };
+    spiceUSBRedirection.enable = true;
+  };
+
+  fonts.fontDir.enable = true;
+  fonts.fontconfig = {
+    defaultFonts = {
+      serif = ["IBM Plex Serif"];
+      sansSerif = ["IBM Plex Sans"];
+      monospace = ["BlexMono"];
+    };
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-
   system.stateVersion = "23.05"; # Did you read the comment?
 }
