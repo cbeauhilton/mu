@@ -1,12 +1,11 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
 {
   config,
   pkgs,
   inputs,
   ...
-}: {
+}: let
+  username = "beau";
+in {
   imports = [
     inputs.sops-nix.nixosModules.sops
     ./hardware-configuration.nix
@@ -14,16 +13,16 @@
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
   sops.defaultSopsFormat = "yaml";
-  sops.age.keyFile = "/home/beau/.config/sops/age/keys.txt";
+  sops.age.keyFile = "/home/${username}/.config/sops/age/keys.txt";
   sops.age.sshKeyPaths = [
-    "/home/beau/.ssh/id_ed25519"
+    "/home/${username}/.ssh/id_ed25519"
   ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   nix.settings.experimental-features = ["nix-command" "flakes"];
-  networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "mu"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -51,53 +50,83 @@
     LC_TIME = "en_US.UTF-8";
   };
 
-  services.xserver.enable = true;
-  security.pam.services.gdm.enableGnomeKeyring = true;
-  security.sudo.wheelNeedsPassword = false;
-  console = {
-    useXkbConfig = true; # use xkbOptions in tty.
-  };
-
-  services.xserver.displayManager.gdm.enable = true;
-  services.xserver.desktopManager.gnome.enable = true;
-
-  # Configure keymap in X11
   services.xserver = {
+    enable = true;
     xkb.layout = "us";
     xkb.variant = "";
     xkb.options = "caps:escape";
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
   };
+  console = {
+    useXkbConfig = true; # use xkbOptions in tty.
+  };
+  security.pam.services.gdm.enableGnomeKeyring = true;
+  security.sudo.wheelNeedsPassword = false;
+
+  # Enable Display Manager
+  # might switch to this at some point but need to figure out the keyring stuff
+  # services.greetd = {
+  #   enable = true;
+  #   settings = {
+  #     default_session = {
+  #       command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
+  #       user = "greeter";
+  #     };
+  #   };
+  # };
+
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
-  xdg.portal.enable = true;
-  xdg.portal.wlr.enable = true;
-  xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk];
-  security.rtkit.enable = true;
   programs.nix-ld.enable = true;
-  # programs.nix-ld = {
-  #   libraries = pkgs.steam-run.fhsenv.args.multiPkgs pkgs;
-  # };
-
-  programs.virt-manager.enable = true;
-  programs.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    xwayland.enable = true;
-  };
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    jack.enable = true;
+  };
+  hardware = {
+    graphics.enable = true;
+  };
+  # programs.nix-ld = {
+  #   libraries = pkgs.steam-run.fhsenv.args.multiPkgs pkgs;
+  # };
+
+  # hyprland
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+    config = {
+      common.default = ["gtk"];
+      hyprland.default = ["gtk" "hyprland"];
+    };
+
+    extraPortals = [
+      pkgs.xdg-desktop-portal-gtk
+    ];
+  };
+  security.rtkit.enable = true;
+  programs.hyprland = {
+    enable = true;
+    package = inputs.hyprland.packages.${pkgs.system}.default;
+    portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+    xwayland.enable = true;
+  };
+  # tell Electron/Chromium to run on Wayland
+  environment.variables.NIXOS_OZONE_WL = "1";
+
+  environment.sessionVariables = {
+    FLAKE = "/home/${username}/src/nixos";
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
   hardware.uinput.enable = true; # req for xremap
-  users.groups.uinput.members = ["beau"]; # req for xremap
-  users.groups.input.members = ["beau"]; # req for xremap # services.libinput.enable = true;
+  users.groups.uinput.members = ["${username}"]; # req for xremap
+  users.groups.input.members = ["${username}"]; # req for xremap # services.libinput.enable = true;
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
   services.libinput = {
@@ -106,21 +135,19 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.beau = {
+  users.users."${username}" = {
     isNormalUser = true;
-    description = "beau";
+    description = "${username}";
     extraGroups = ["networkmanager" "wheel" "audio" "pipewire" "libvirtd"];
-    # dconf.settings = {
-    #   "org/virt-manager/virt-manager/connections" = {
-    #     autoconnect = [ "qemu:///system" ];
-    #     uris = [ "qemu:///system" ];
-    #   };
-    # };
   };
 
   # Enable automatic login for the user.
-  services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "beau";
+  services.displayManager = {
+    autoLogin = {
+      enable = true;
+      user = "${username}";
+    };
+  };
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
   systemd.services."getty@tty1".enable = false;
@@ -128,17 +155,17 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
   environment.variables.EDITOR = "nvim";
-  environment.sessionVariables = {
-    FLAKE = "/home/beau/src/nixos";
-    NIXOS_OZONE_WL = "1";
-  };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    # greetd.tuigreet
     sops
-    code-cursor
     networkmanagerapplet
+    libgcc
+    zig
+    rustup
     neovim
     bun
     wget
@@ -179,6 +206,7 @@
     ibm-plex
   ];
 
+  programs.virt-manager.enable = true;
   virtualisation = {
     libvirtd = {
       enable = true;
@@ -192,6 +220,7 @@
     spiceUSBRedirection.enable = true;
   };
 
+  services.flatpak.enable = true;
   fonts.fontDir.enable = true;
   fonts.fontconfig = {
     defaultFonts = {
@@ -201,11 +230,5 @@
     };
   };
 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "23.05"; # Did you read the comment?
+  system.stateVersion = "23.05"; # don't change this
 }

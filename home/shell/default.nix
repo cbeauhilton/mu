@@ -1,6 +1,7 @@
 {
   config,
   pkgs,
+  inputs,
   ...
 }: {
   imports = [
@@ -31,7 +32,7 @@
   ];
 
   home.sessionVariables = {
-    XAUTHORITY = "$XDG_RUNTIME_DIR/Xauthority";
+    # XAUTHORITY = "$XDG_RUNTIME_DIR/Xauthority";
     EDITOR = "nvim";
     BROWSER = "firefox";
     TERMINAL = "alacritty";

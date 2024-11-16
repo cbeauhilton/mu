@@ -14,11 +14,13 @@
     ags.url = "github:aylur/ags";
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland";
-    hyprgrass = { # swipe gestures for workspaces
+    hyprgrass = {
+      # swipe gestures for workspaces
       url = "github:horriblename/hyprgrass";
       inputs.hyprland.follows = "hyprland";
     };
-    Hyprspace = { # workspace overview feature
+    Hyprspace = {
+      # workspace overview feature
       url = "github:KZDKM/Hyprspace";
       inputs.hyprland.follows = "hyprland";
     };
@@ -30,7 +32,8 @@
       url = "github:hyprwm/hyprland-plugins";
       inputs.hyprland.follows = "hyprland";
     };
-    hyprsplit = { # dwm-like workspace manager - breaks sometimes
+    hyprsplit = {
+      # dwm-like workspace manager - breaks sometimes
       url = "github:shezdy/hyprsplit";
       inputs.hyprland.follows = "hyprland";
     };
@@ -58,8 +61,10 @@
     system = "x86_64-linux";
   in {
     nixosConfigurations = {
-      nixos = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs pkgs;};
+      mu = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs pkgs;
+        };
         modules = [
           ./configuration.nix
 
@@ -67,7 +72,9 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = {inherit inputs pkgs;};
+            home-manager.extraSpecialArgs = {
+              inherit inputs pkgs;
+            };
             home-manager.users.beau.imports = [
               ./home.nix
             ];

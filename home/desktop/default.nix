@@ -13,9 +13,11 @@
   ];
   home.packages = with pkgs; [
     arandr # GUI for arranging multiple screens
+    code-cursor # vscode with LLMs built in
     pavucontrol # GUI for audio inputs/outputs
     simplescreenrecorder
     zotero # should probably move this to an "academic" folder or smth
+    libnotify
   ];
   # theming
   home.pointerCursor = {
