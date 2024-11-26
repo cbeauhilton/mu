@@ -19,15 +19,16 @@
   ];
 
   home.packages = with pkgs; [
-    bc
-    imv
-    pavucontrol
-    delta
-    ncdu
-    ripgrep
-    fd
-    nil
+    # imv
     alejandra
+    bc
+    delta
+    fd
+    ncdu
+    nil
+    ov
+    pavucontrol
+    ripgrep
     xdragon
   ];
 
@@ -48,5 +49,16 @@
     vim = "nvim";
     g = "git";
     mkdir = "mkdir -p";
+  };
+  programs.imv = {
+    enable = true;
+    settings = {};
+  };
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    config = {
+      global.warn_timeout = "0";
+    };
   };
 }

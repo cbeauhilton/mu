@@ -9,6 +9,8 @@ in {
   imports = [
     inputs.sops-nix.nixosModules.sops
     ./hardware-configuration.nix
+    ./shared
+    ./hosts
   ];
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
@@ -21,7 +23,20 @@ in {
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix = {
+    settings = {
+      experimental-features = ["nix-command" "flakes"];
+      accept-flake-config = true;
+      warn-dirty = false;
+      auto-optimise-store = true;
+      trusted-users = ["beau" "@wheel" "root"];
+    };
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 7d";
+    };
+  };
   networking.hostName = "mu"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
@@ -138,7 +153,7 @@ in {
   users.users."${username}" = {
     isNormalUser = true;
     description = "${username}";
-    extraGroups = ["networkmanager" "wheel" "audio" "pipewire" "libvirtd"];
+    extraGroups = ["docker" "networkmanager" "wheel" "audio" "pipewire" "libvirtd"];
   };
 
   # Enable automatic login for the user.
@@ -157,27 +172,6 @@ in {
   nixpkgs.config.allowUnfree = true;
 
   environment.variables.EDITOR = "nvim";
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-    # greetd.tuigreet
-    sops
-    networkmanagerapplet
-    libgcc
-    zig
-    rustup
-    neovim
-    bun
-    wget
-    curl
-    alacritty
-    alejandra
-    vlc
-    mpv
-    nh
-    git
-    bitwarden-cli
-  ];
 
   ### tailscale
   services.tailscale.enable = true;
@@ -208,6 +202,9 @@ in {
 
   programs.virt-manager.enable = true;
   virtualisation = {
+    docker = {
+      enable = true;
+    };
     libvirtd = {
       enable = true;
       qemu = {

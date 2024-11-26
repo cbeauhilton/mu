@@ -15,7 +15,8 @@
     arandr # GUI for arranging multiple screens
     code-cursor # vscode with LLMs built in
     pavucontrol # GUI for audio inputs/outputs
-    simplescreenrecorder
+    wf-recorder
+    ffmpeg
     zotero # should probably move this to an "academic" folder or smth
     libnotify
   ];
@@ -54,7 +55,15 @@
 
   xdg = {
     enable = true;
-    userDirs.download = "${config.home.homeDirectory}/dl";
+    userDirs = {
+      createDirectories = true;
+      download = "${config.home.homeDirectory}/dl";
+      music = "${config.home.homeDirectory}/media/music";
+      videos = "${config.home.homeDirectory}/media/videos";
+      extraConfig = {
+        XDG_SCREENSHOTS_DIR = "${config.home.homeDirectory}/media/images/screenshots";
+      };
+    };
     desktopEntries = {
       firefox = {
         name = "Firefox";

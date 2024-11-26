@@ -37,6 +37,18 @@ in {
   services.mako = {
     enable = true;
   };
+  services.hypridle = {
+    enable = true;
+    settings = {
+      listener = [
+        {
+          timeout = 10;
+          on-timeout = "hyprctl dispatch dpms off";
+          on-resume = "hyprctl dispatch dpms on";
+        }
+      ];
+    };
+  };
 
   programs.wofi = {
     enable = true;
