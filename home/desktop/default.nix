@@ -19,6 +19,8 @@
     ffmpeg
     zotero # should probably move this to an "academic" folder or smth
     libnotify
+    sqlitebrowser
+    graphviz
   ];
   # theming
   home.pointerCursor = {
