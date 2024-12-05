@@ -97,6 +97,16 @@
     # inputs.ags.packages.${pkgs.system}.io
     # inputs.ags.packages.${pkgs.system}.notifd
     # inputs.ags.packages.${pkgs.system}.hyprland
+
+    # fonts
+    (pkgs.nerdfonts.override { fonts = [ 
+        "IBMPlexMono"
+        "Hack"
+        "FiraCode"
+      "DroidSansMono" 
+    ]; })
+    ibm-plex
+
   ];
 
   # basic configuration of git, please change to your own
@@ -147,6 +157,8 @@
   programs.aria2 = {
     enable = true;
   };
+
+  fonts.fontconfig.enable = true;
 
   # starship - an customizable prompt for any shell
   programs.starship = {

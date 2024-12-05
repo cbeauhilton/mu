@@ -172,6 +172,7 @@ in {
   nixpkgs.config.allowUnfree = true;
 
   environment.variables.EDITOR = "nvim";
+  environment.variables.PYTHONPYCACHEPREFIX = "/tmp/pycache-dir";
 
   ### tailscale
   services.tailscale.enable = true;

@@ -81,8 +81,10 @@ in {
         touchpad.natural_scroll = true;
       };
       monitor = [
-        "DP-3,preferred,0x0,1,transform,1"
-        "HDMI-A-1,preferred,1080x0,1"
+        "eDP-1, preferred, auto, 2"
+        ", preferred, auto, 1"
+        # "DP-3,preferred,0x0,1,transform,1"
+        # "HDMI-A-1,preferred,1080x0,1"
       ];
       general = {
         gaps_in = 5;
