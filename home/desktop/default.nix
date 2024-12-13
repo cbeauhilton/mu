@@ -21,6 +21,8 @@
     libnotify
     sqlitebrowser
     graphviz
+    wl-clipboard
+    clipse
   ];
   # theming
   home.pointerCursor = {
@@ -55,6 +57,7 @@
     style.package = pkgs.adwaita-qt;
   };
 
+  home.preferXdgDirectories = true;
   xdg = {
     enable = true;
     userDirs = {
@@ -62,6 +65,7 @@
       download = "${config.home.homeDirectory}/dl";
       music = "${config.home.homeDirectory}/media/music";
       videos = "${config.home.homeDirectory}/media/videos";
+      pictures = "${config.home.homeDirectory}/media/images";
       extraConfig = {
         XDG_SCREENSHOTS_DIR = "${config.home.homeDirectory}/media/images/screenshots";
       };

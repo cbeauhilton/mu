@@ -10,6 +10,7 @@
     sleep 1
     ${pkgs.swww}/bin/swww img ${./wallpaper.jpeg} &
     ${pkgs.mako}/bin/mako &
+    ${pkgs.clipse}/bin/clipse -listen &
     xremap --watch .config/xremap/config.yml &
   '';
 in {
@@ -141,6 +142,9 @@ in {
         "rounding 0, floating:0, onworkspace:w[tg1]"
         "bordersize 0, floating:0, onworkspace:f[1]"
         "rounding 0, floating:0, onworkspace:f[1]"
+        "float, class:(clipse)"
+        "size 622 652, class:(clipse)" # set the size of the window as necessary
+
       ];
       animations = {
         enabled = true;
@@ -177,6 +181,7 @@ in {
         "$mainMod, t, togglefloating,"
         "$mainMod CTRL, t, togglespecialworkspace, term"
         "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        "$mainMod, V, exec, alacritty --class clipse -e 'clipse' "
 
         # grimblast's "copysave" both saves a file in the home directory and copies to clipboard
         "$mainMod SHIFT, c, exec, grimblast copysave area"

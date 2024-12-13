@@ -18,6 +18,7 @@ in {
   sops.age.keyFile = "/home/${username}/.config/sops/age/keys.txt";
   sops.age.sshKeyPaths = [
     "/home/${username}/.ssh/id_ed25519"
+    "/home/\${username}/.ssh/id_rsa"
   ];
 
   # Bootloader.
@@ -149,20 +150,7 @@ in {
     touchpad.naturalScrolling = true;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users."${username}" = {
-    isNormalUser = true;
-    description = "${username}";
-    extraGroups = ["docker" "networkmanager" "wheel" "audio" "pipewire" "libvirtd"];
-  };
 
-  # Enable automatic login for the user.
-  services.displayManager = {
-    autoLogin = {
-      enable = true;
-      user = "${username}";
-    };
-  };
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
   systemd.services."getty@tty1".enable = false;
