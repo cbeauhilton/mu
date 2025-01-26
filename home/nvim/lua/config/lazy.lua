@@ -13,6 +13,14 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   end
 end
 vim.opt.rtp:prepend(lazypath)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "markdown",
+  callback = function(event)
+    if event.file:match("^/home/beau/src/personal/talks") then
+      vim.b.autoformat = false
+    end
+  end,
+})
 
 require("lazy").setup({
   spec = {

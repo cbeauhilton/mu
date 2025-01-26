@@ -13,16 +13,17 @@
   ];
   home.packages = with pkgs; [
     arandr # GUI for arranging multiple screens
-    code-cursor # vscode with LLMs built in
-    pavucontrol # GUI for audio inputs/outputs
-    wf-recorder
-    ffmpeg
-    zotero # should probably move this to an "academic" folder or smth
-    libnotify
-    sqlitebrowser
-    graphviz
-    wl-clipboard
     clipse
+    code-cursor # vscode with LLMs built in
+    discord-ptb
+    ffmpeg
+    graphviz
+    libnotify
+    pavucontrol # GUI for audio inputs/outputs
+    sqlitebrowser
+    wf-recorder
+    wl-clipboard
+    zotero # should probably move this to an "academic" folder or smth
   ];
   # theming
   home.pointerCursor = {
@@ -56,7 +57,14 @@
     style.name = "adwaita-dark";
     style.package = pkgs.adwaita-qt;
   };
-
+  programs.obs-studio = {
+    enable = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+      obs-backgroundremoval
+      obs-pipewire-audio-capture
+    ];
+  };
   home.preferXdgDirectories = true;
   xdg = {
     enable = true;

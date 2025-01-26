@@ -30,6 +30,12 @@
     pavucontrol
     ripgrep
     xdragon
+    ansible
+    ansible-lint
+    terraform-providers.ansible
+    ansible-language-server
+    python312Packages.ansible-vault-rw
+    whois
   ];
 
   home.sessionVariables = {

@@ -71,7 +71,7 @@ in {
     plugins = [
       inputs.hyprsplit.packages.${pkgs.system}.hyprsplit
       inputs.hyprgrass.packages.${pkgs.system}.default
-      inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
+      # inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
     ];
     # xwayland.enable = true;
     settings = {
@@ -144,7 +144,6 @@ in {
         "rounding 0, floating:0, onworkspace:f[1]"
         "float, class:(clipse)"
         "size 622 652, class:(clipse)" # set the size of the window as necessary
-
       ];
       animations = {
         enabled = true;

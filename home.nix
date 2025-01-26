@@ -9,7 +9,7 @@
   ];
 
   home.username = "beau";
-  home.homeDirectory = "/home/beau";
+  # home.homeDirectory = "/home/beau";
 
   # link the configuration file in current directory to the specified location in home directory
   # home.file.".config/i3/wallpaper.jpg".source = ./wallpaper.jpg;
@@ -99,12 +99,10 @@
     # inputs.ags.packages.${pkgs.system}.hyprland
 
     # fonts
-    (pkgs.nerdfonts.override { fonts = [ 
-        "IBMPlexMono"
-        "Hack"
-        "FiraCode"
-      "DroidSansMono" 
-    ]; })
+    nerd-fonts.blex-mono
+    nerd-fonts.hack
+    nerd-fonts.fira-code
+    nerd-fonts.droid-sans-mono
     ibm-plex
 
   ];

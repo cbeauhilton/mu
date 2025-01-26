@@ -9,6 +9,7 @@ in {
   imports = [
     inputs.sops-nix.nixosModules.sops
     ./hardware-configuration.nix
+    ./users.nix
     ./shared
     ./hosts
   ];
@@ -18,7 +19,8 @@ in {
   sops.age.keyFile = "/home/${username}/.config/sops/age/keys.txt";
   sops.age.sshKeyPaths = [
     "/home/${username}/.ssh/id_ed25519"
-    "/home/\${username}/.ssh/id_rsa"
+    "/home/${username}/.ssh/id_rsa"
+    "/home/${username}/.ssh/id_ed25519_pve"
   ];
 
   # Bootloader.
@@ -37,6 +39,10 @@ in {
       dates = "weekly";
       options = "--delete-older-than 7d";
     };
+    extraOptions = ''
+      keep-outputs = true
+      keep-derivations = true
+    '';
   };
   networking.hostName = "mu"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -96,7 +102,7 @@ in {
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   programs.nix-ld.enable = true;
   services.pipewire = {
     enable = true;
@@ -150,8 +156,6 @@ in {
     touchpad.naturalScrolling = true;
   };
 
-
-
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
@@ -179,13 +183,9 @@ in {
   # networking.firewall.enable = false;
 
   fonts.packages = with pkgs; [
-    (nerdfonts.override {
-      fonts = [
-        "IBMPlexMono"
-        "Hack"
-        "FiraCode"
-      ];
-    })
+    nerd-fonts.blex-mono
+    nerd-fonts.hack
+    nerd-fonts.fira-code
     ibm-plex
   ];
 

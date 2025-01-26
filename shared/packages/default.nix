@@ -7,6 +7,7 @@
 
   environment.systemPackages = with pkgs; [
     # greetd.tuigreet
+    # nvi # this is a nice version of vi, but breaking the install. idk.
     alacritty
     alejandra
     bitwarden-cli
@@ -27,10 +28,11 @@
     postgresql
     rustup
     sops
+    teams-for-linux
     tmux
+    uv
     vlc
     wget
-    uv
     zig
   ];
 }

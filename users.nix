@@ -1,10 +1,7 @@
-{
-  ...
-}: let
+{...}: let
   username = "beau";
 in {
-
-users.users."${username}" = {
+  users.users."${username}" = {
     isNormalUser = true;
     description = "${username}";
     extraGroups = ["docker" "networkmanager" "wheel" "audio" "pipewire" "libvirtd"];
@@ -17,5 +14,4 @@ users.users."${username}" = {
       user = "${username}";
     };
   };
-
 }
