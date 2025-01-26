@@ -72,13 +72,14 @@ in {
     LC_TIME = "en_US.UTF-8";
   };
 
+
   services.xserver = {
     enable = true;
     xkb.layout = "us";
     xkb.variant = "";
     xkb.options = "caps:escape";
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
+    # displayManager.gdm.enable = false;
+    # desktopManager.gnome.enable = false;
   };
   console = {
     useXkbConfig = true; # use xkbOptions in tty.
@@ -157,8 +158,8 @@ in {
   };
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
+  # systemd.services."getty@tty1".enable = false;
+  # systemd.services."autovt@tty1".enable = false;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

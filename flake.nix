@@ -81,7 +81,7 @@
     nixosConfigurations = {
       mu = nixpkgs.lib.nixosSystem {
         specialArgs = {
-          inherit inputs pkgs;
+          inherit inputs;
         };
         modules = [
           ./configuration.nix
