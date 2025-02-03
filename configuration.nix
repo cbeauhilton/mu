@@ -87,31 +87,44 @@ in {
   security.pam.services.gdm.enableGnomeKeyring = true;
   security.sudo.wheelNeedsPassword = false;
 
-  # Enable Display Manager
-  # might switch to this at some point but need to figure out the keyring stuff
-  # services.greetd = {
-  #   enable = true;
-  #   settings = {
-  #     default_session = {
-  #       command = "${pkgs.greetd.tuigreet}/bin/tuigreet --time --time-format '%I:%M %p | %a • %h | %F' --cmd Hyprland";
-  #       user = "greeter";
-  #     };
-  #   };
-  # };
-
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  services.pulseaudio.enable = false;
+  # services.pulseaudio.enable = true;
   programs.nix-ld.enable = true;
+  security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    jack.enable = true;
+    # jack.enable = true;
+    extraConfig.pipewire."92-low-latency" = {
+    "context.properties" = {
+      "default.clock.rate" = 48000;
+      "default.clock.quantum" = 1024;  # Increased from default for stability
+      "default.clock.min-quantum" = 1024;
+      "default.clock.max-quantum" = 2048;
+    };
   };
+  # Specific USB device configuration
+  wireplumber.configPackages = [
+    (pkgs.writeTextDir "share/wireplumber/main.lua.d/99-usb-headset.lua" ''
+      alsa_monitor.rules = {
+        {
+          matches = {{{ "node.name", "matches", "alsa_output.usb-DSEA_A_S_EPOS_IMPACT_860T*" }}};
+          apply_properties = {
+            ["audio.format"] = "S16LE",  # Your device uses 16-bit format
+            ["audio.rate"] = 48000,      # Match system rate
+            ["api.alsa.period-size"] = 1024,
+            ["api.alsa.headroom"] = 256,
+          },
+        },
+      }
+    '')
+  ];
+};
   hardware = {
     graphics.enable = true;
   };
@@ -132,7 +145,6 @@ in {
       pkgs.xdg-desktop-portal-gtk
     ];
   };
-  security.rtkit.enable = true;
   programs.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.default;

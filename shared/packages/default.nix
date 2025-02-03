@@ -6,7 +6,6 @@
   # $ nix search wget
 
   environment.systemPackages = with pkgs; [
-    # greetd.tuigreet
     # nvi # this is a nice version of vi, but breaking the install. idk.
     alacritty
     alejandra
