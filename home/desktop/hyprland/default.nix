@@ -79,11 +79,11 @@ in {
       };
       # run hyprctl monitors all to see the names, use the descriptions so name (e.g. DP-4) reassignments don't cause issues
       monitor = [
-        "desc:Dell Inc. DELL P2417H FMXNR78C18KT, 1920x1080@60, 0x0, 1, transform, 1"      # Left monitor (portrait)
-        "desc:Dell Inc. DELL P2419H 2SMZYR2, 1920x1080@60, 1080x0, 1"                      # Middle monitor (landscape) 
+        "desc:Dell Inc. DELL P2417H FMXNR78C18KT, 1920x1080@60, 0x0, 1, transform, 1" # Left monitor (portrait)
+        "desc:Dell Inc. DELL P2419H 2SMZYR2, 1920x1080@60, 1080x0, 1" # Middle monitor (landscape)
         "desc:Biomedical Systems Laboratory L3 PRO L3PRO-240328, 1920x860@60, 1080x1080, 1" # Bottom monitor (landscape)
-        "desc:Samsung Display Corp. 0x4165, 3840x2400@60, 3000x0, 2"                        # Laptop monitor (landscape, right)
-        ", preferred, auto, 1"                                                              # Fallback rule for any new monitors
+        "desc:Samsung Display Corp. 0x4165, 3840x2400@60, 3000x0, 2" # Laptop monitor (landscape, right)
+        ", preferred, auto, 1" # Fallback rule for any new monitors
       ];
       general = {
         gaps_in = 5;

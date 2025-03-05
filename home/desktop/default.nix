@@ -5,6 +5,7 @@
 }: {
   imports = [
     ./hyprland
+    ./ghostty
     ./xremap
     ./waybar
     ./rofi
