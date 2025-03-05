@@ -78,13 +78,11 @@ in {
     xkb.layout = "us";
     xkb.variant = "";
     xkb.options = "caps:escape";
-    # displayManager.gdm.enable = false;
-    # desktopManager.gnome.enable = false;
   };
   console = {
     useXkbConfig = true; # use xkbOptions in tty.
   };
-  security.pam.services.gdm.enableGnomeKeyring = true;
+  # security.pam.services.gdm.enableGnomeKeyring = true;
   security.sudo.wheelNeedsPassword = false;
 
   # Enable CUPS to print documents.
@@ -128,6 +126,19 @@ in {
   hardware = {
     graphics.enable = true;
   };
+
+  #  bluetooth
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  hardware.bluetooth.package = pkgs.bluez;
+  services.blueman.enable = true;
+  # hardware.bluetooth.settings = { # shows battery charge, etc.
+  #   General = {
+  #     Experimental = true;
+  #   };
+  # };
+  hardware.enableAllFirmware = true;
+
   # programs.nix-ld = {
   #   libraries = pkgs.steam-run.fhsenv.args.multiPkgs pkgs;
   # };
@@ -167,11 +178,9 @@ in {
   services.libinput = {
     enable = true;
     touchpad.naturalScrolling = true;
+    mouse.naturalScrolling = true;
+    
   };
-
-  # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-  # systemd.services."getty@tty1".enable = false;
-  # systemd.services."autovt@tty1".enable = false;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

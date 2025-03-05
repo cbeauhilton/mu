@@ -21,6 +21,11 @@
       Host pve
         HostName pve
         User root
+
+      Host pve
+        User terraform
+        IdentityFile ~/.ssh/id_ed25519_pve
+        IdentitiesOnly yes
     '';
   };
 }

@@ -33,5 +33,8 @@
     vlc
     wget
     zig
+    # terraform
+    terraform
+    tenv
   ];
 }
