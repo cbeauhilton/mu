@@ -6,11 +6,10 @@
 }: let
   startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
     ${pkgs.waybar}/bin/waybar &
-    ${pkgs.swww}/bin/swww init &
     sleep 1
-    ${pkgs.swww}/bin/swww img ${./wallpaper.jpeg} &
     ${pkgs.mako}/bin/mako &
     ${pkgs.clipse}/bin/clipse -listen &
+    ${pkgs.swww}/bin/waypaper --resume &
     xremap --watch .config/xremap/config.yml &
   '';
 in {
@@ -24,9 +23,8 @@ in {
     neofetch
     wofi-emoji
     wezterm
-    swww
-
-    # mako
+    waypaper
+    swaybg
   ];
 
   # make stuff work on wayland
@@ -71,9 +69,7 @@ in {
     plugins = [
       inputs.hyprsplit.packages.${pkgs.system}.hyprsplit
       inputs.hyprgrass.packages.${pkgs.system}.default
-      # inputs.Hyprspace.packages.${pkgs.system}.Hyprspace
     ];
-    # xwayland.enable = true;
     settings = {
       exec-once = ''${startupScript}/bin/start'';
       input = {
@@ -81,11 +77,13 @@ in {
         natural_scroll = true;
         touchpad.natural_scroll = true;
       };
+      # run hyprctl monitors all to see the names, use the descriptions so name (e.g. DP-4) reassignments don't cause issues
       monitor = [
-        "eDP-1, preferred, auto, 2"
-        ", preferred, auto, 1"
-        # "DP-3,preferred,0x0,1,transform,1"
-        # "HDMI-A-1,preferred,1080x0,1"
+        "desc:Dell Inc. DELL P2417H FMXNR78C18KT, 1920x1080@60, 0x0, 1, transform, 1"      # Left monitor (portrait)
+        "desc:Dell Inc. DELL P2419H 2SMZYR2, 1920x1080@60, 1080x0, 1"                      # Middle monitor (landscape) 
+        "desc:Biomedical Systems Laboratory L3 PRO L3PRO-240328, 1920x860@60, 1080x1080, 1" # Bottom monitor (landscape)
+        "desc:Samsung Display Corp. 0x4165, 3840x2400@60, 3000x0, 2"                        # Laptop monitor (landscape, right)
+        ", preferred, auto, 1"                                                              # Fallback rule for any new monitors
       ];
       general = {
         gaps_in = 5;
