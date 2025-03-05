@@ -104,7 +104,6 @@
     nerd-fonts.fira-code
     nerd-fonts.droid-sans-mono
     ibm-plex
-
   ];
 
   # basic configuration of git, please change to your own
