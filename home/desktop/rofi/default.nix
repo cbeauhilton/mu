@@ -120,7 +120,7 @@ in {
 
       modi = "drun";
       icon-theme = "Oranchelo";
-      terminal = "alacritty";
+      # terminal = "alacritty";
       drun-display-format = "{icon} {name}";
       location = 0;
       disable-history = false;

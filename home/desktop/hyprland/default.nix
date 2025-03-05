@@ -12,6 +12,7 @@
     ${pkgs.swww}/bin/waypaper --resume &
     xremap --watch .config/xremap/config.yml &
   '';
+  terminal = "ghostty";
 in {
   home.packages = with pkgs; [
     wl-clipboard
@@ -165,20 +166,20 @@ in {
 
       "$mainMod" = "SUPER";
       bind = [
-        "$mainMod, return, exec, alacritty"
+        "$mainMod, return, exec, ${terminal}"
         "$mainMod, w, exec, firefox"
         "$mainMod, q, killactive,"
         "$mainMod SHIFT, q, exit,"
         "$mainMod, f, fullscreen, 1"
         "$mainMod SHIFT, f, fullscreen, 0"
         "$mainMod, d, exec, rofi -show drun"
-        "$mainMod, r, exec, alacritty -e yazi"
+        "$mainMod, r, exec, ${terminal} -e yazi"
         "$mainMod SHIFT, r, exec, thunar"
-        "$mainMod, m, exec, alacritty -e ncmpcpp"
+        "$mainMod, m, exec, ${terminal} -e ncmpcpp"
         "$mainMod, t, togglefloating,"
         "$mainMod CTRL, t, togglespecialworkspace, term"
         "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        "$mainMod, V, exec, alacritty --class clipse -e 'clipse' "
+        "$mainMod, V, exec, ${terminal} --class clipse -e 'clipse' "
 
         # grimblast's "copysave" both saves a file in the home directory and copies to clipboard
         "$mainMod SHIFT, c, exec, grimblast copysave area"

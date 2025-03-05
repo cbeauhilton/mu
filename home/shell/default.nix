@@ -42,7 +42,7 @@
     # XAUTHORITY = "$XDG_RUNTIME_DIR/Xauthority";
     EDITOR = "nvim";
     BROWSER = "firefox";
-    TERMINAL = "alacritty";
+    TERMINAL = "ghostty";
     BAT_PAGER = "ov -F -H3";
     DELTA_PAGER = "ov --section-delimiter '^(commit|added:|removed:|renamed:|Δ)' --section-header --pattern '•'";
     MANPAGER = "ov";
