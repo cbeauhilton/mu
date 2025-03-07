@@ -94,9 +94,6 @@
     ethtool
     pciutils # lspci
     usbutils # lsusb
-    # inputs.ags.packages.${pkgs.system}.io
-    # inputs.ags.packages.${pkgs.system}.notifd
-    # inputs.ags.packages.${pkgs.system}.hyprland
 
     # fonts
     nerd-fonts.blex-mono
