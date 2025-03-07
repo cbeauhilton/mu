@@ -8,7 +8,7 @@
     sleep 1
     ${pkgs.mako}/bin/mako &
     ${pkgs.clipse}/bin/clipse -listen &
-    ${pkgs.swww}/bin/waypaper --resume &
+    ${pkgs.waypaper}/bin/waypaper --resume &
     xremap --watch .config/xremap/config.yml &
   '';
   terminal = "ghostty";

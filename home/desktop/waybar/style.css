@@ -1,10 +1,30 @@
+/* Gruvbox Dark Hard palette */
+@define-color gruvbox-bg #1b1b1b;
+@define-color gruvbox-bg1 #3c3836;
+@define-color gruvbox-bg2 #504945;
+@define-color gruvbox-bg3 #665c54;
+@define-color gruvbox-fg #ebdbb2;
+@define-color gruvbox-red #cc241d;
+@define-color gruvbox-green #98971a;
+@define-color gruvbox-yellow #d79921;
+@define-color gruvbox-blue #458588;
+@define-color gruvbox-purple #b16286;
+@define-color gruvbox-aqua #689d6a;
+@define-color gruvbox-gray #a89984;
+@define-color gruvbox-bright-red #fb4934;
+@define-color gruvbox-bright-green #b8bb26;
+@define-color gruvbox-bright-yellow #fabd2f;
+@define-color gruvbox-bright-blue #83a598;
+@define-color gruvbox-bright-purple #d3869b;
+@define-color gruvbox-bright-aqua #8ec07c;
+
 * {
     /* `otf-font-awesome` is required to be installed for icons */
-    border: #33ccff;
+    border: @gruvbox-bright-blue;
     border-radius: 4px;
-    font-family:  "IBM Plex Mono", "Hack Nerd Font", FontAwesome, Roboto, Helvetica, Arial, sans-serif;
+    font-family: "IBM Plex Mono", "Hack Nerd Font", FontAwesome, Roboto, Helvetica, Arial, sans-serif;
     font-size: 15px;
-   }
+}
 
 window#waybar {
     background: transparent;
@@ -23,16 +43,16 @@ button:hover {
 #workspaces button {
     padding: 0 0.3em;
     background-color: transparent;
-    color: #ffffff;
+    color: @gruvbox-fg;
 }
 
 #workspaces button.active {
     background: inherit;
-    color: #128C21;
+    color: @gruvbox-bright-green;
 }
 
 #workspaces button.urgent {
-    background-color: #eb4d4b;
+    background-color: @gruvbox-bright-red;
 }
 
 #mode {
@@ -58,7 +78,7 @@ button:hover {
 #mpd {
     padding: 0 10px;
     margin: 3px 3px;
-    color: #333333;
+    color: @gruvbox-fg;
 }
 
 #window,
@@ -77,29 +97,29 @@ button:hover {
 }
 
 #clock {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #battery {
-    background-color: #bbccdd;
-    color: #333333;
+    background-color: @gruvbox-bg;
+    color: @gruvbox-fg;
 }
 
 #battery.charging, #battery.plugged {
-    color: #ffffff;
-    background-color: #26A65B;
+    color: @gruvbox-fg;
+    background-color: @gruvbox-bg;
 }
 
 @keyframes blink {
     to {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: @gruvbox-fg;
+        color: @gruvbox-bg;
     }
 }
 
 #battery.critical:not(.charging) {
-    background-color: #f53c3c;
-    color: #ffffff;
+    background-color: @gruvbox-bright-red;
+    color: @gruvbox-fg;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
@@ -108,74 +128,74 @@ button:hover {
 }
 
 label:focus {
-    background-color: #000000;
+    background-color: @gruvbox-bg;
 }
 
 #cpu {
-    background-color: #bbccdd;
-    color: #000000;
+    background-color: @gruvbox-bg;
+    color: @gruvbox-fg;
 }
 
 #memory {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #disk {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #backlight {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #network {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #network.disconnected {
-    background-color: #f53c3c;
+    background-color: @gruvbox-bright-red;
 }
 
 #pulseaudio {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #pulseaudio.muted {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg2;
 }
 
 #wireplumber {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #wireplumber.muted {
-    background-color: #f53c3c;
+    background-color: @gruvbox-bright-red;
 }
 
 #custom-media {
-    background-color: #66cc99;
-    color: #2a5c45;
+    background-color: @gruvbox-aqua;
+    color: @gruvbox-bg;
     min-width: 100px;
 }
 
 #custom-media.custom-spotify {
-    background-color: #66cc99;
+    background-color: @gruvbox-bright-aqua;
 }
 
 #custom-media.custom-vlc {
-    background-color: #ffa000;
+    background-color: @gruvbox-bright-yellow;
 }
 
 #temperature {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #temperature.critical {
-    background-color: #eb4d4b;
+    background-color: @gruvbox-bright-red;
 }
 
 #tray {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #tray > .passive {
@@ -188,41 +208,41 @@ label:focus {
 }
 
 #idle_inhibitor {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #idle_inhibitor.activated {
-    background-color: #ecf0f1;
-    color: #2d3436;
+    background-color: @gruvbox-gray;
+    color: @gruvbox-bg;
 }
 
 #mpd {
-    background-color: #bbccdd;
+    background-color: @gruvbox-bg;
 }
 
 #mpd.disconnected {
-    background-color: #f53c3c;
+    background-color: @gruvbox-bright-red;
 }
 
 #mpd.stopped {
-    background-color: #90b1b1;
+    background-color: @gruvbox-bg3;
 }
 
 #mpd.paused {
-    background-color: #51a37a;
+    background-color: @gruvbox-aqua;
 }
 
 #language {
-    background: #bbccdd;
-    color: #333333;
+    background: @gruvbox-bg;
+    color: @gruvbox-fg;
     padding: 0 5px;
     margin: 0 5px;
     min-width: 16px;
 }
 
 #keyboard-state {
-    background: #bbccdd;
-    color: #333333;
+    background: @gruvbox-bg;
+    color: @gruvbox-fg;
     padding: 0 0px;
     margin: 0 5px;
     min-width: 16px;
@@ -241,5 +261,5 @@ label:focus {
 }
 
 #scratchpad.empty {
-	background-color: transparent;
+    background-color: transparent;
 }
