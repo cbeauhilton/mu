@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   inputs,
   ...
 }: let
@@ -16,16 +15,14 @@
 in {
   home.packages = with pkgs; [
     wl-clipboard
-    wlr-randr
+    # wlr-randr # don't think I need this anymore
     grim
     slurp
     brightnessctl
     inputs.hyprland-contrib.packages.x86_64-linux.grimblast
     neofetch
-    wofi-emoji
-    wezterm
     waypaper
-    swaybg
+    swaybg # waypaper needs a backend, swaybg seems to work the best
   ];
 
   # make stuff work on wayland
@@ -48,19 +45,6 @@ in {
           on-resume = "hyprctl dispatch dpms on";
         }
       ];
-    };
-  };
-
-  programs.wofi = {
-    enable = true;
-    settings = {
-      image_size = 48;
-      columns = 3;
-      allow_images = true;
-      insensitive = true;
-      run-always_parse_args = true;
-      run-cache_file = "/dev/null";
-      run-exec_search = true;
     };
   };
 
@@ -177,9 +161,9 @@ in {
         "$mainMod SHIFT, r, exec, thunar"
         "$mainMod, m, exec, ${terminal} -e ncmpcpp"
         "$mainMod, t, togglefloating,"
-        "$mainMod CTRL, t, togglespecialworkspace, term"
+        "$mainMod CTRL, t, togglespecialworkspace, magic"
         "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        "$mainMod, V, exec, ${terminal} --class clipse -e 'clipse' "
+        "$mainMod, V, exec, ${terminal} -e clipse"
 
         # grimblast's "copysave" both saves a file in the home directory and copies to clipboard
         "$mainMod SHIFT, c, exec, grimblast copysave area"
