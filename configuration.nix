@@ -12,6 +12,9 @@ in {
     ./shared
     ./hosts
     ./secrets.nix
+    ./audio.nix
+    ./display.nix
+    ./fonts.nix
   ];
 
   # Bootloader.
@@ -35,10 +38,10 @@ in {
       keep-derivations = true
     '';
   };
-  networking.hostName = "mu"; # Define your hostname.
+
+  networking.hostName = "mu";
   networking.networkmanager.enable = true;
   time.timeZone = "America/Chicago";
-
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "en_US.UTF-8";
@@ -52,87 +55,14 @@ in {
     LC_TIME = "en_US.UTF-8";
   };
 
-  services.xserver = {
-    enable = true;
-    xkb.layout = "us";
-    xkb.variant = "";
-    xkb.options = "caps:escape";
-  };
-  console = {
-    useXkbConfig = true; # use xkbOptions in tty.
-  };
   security.sudo.wheelNeedsPassword = false;
 
-  # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.flatpak.enable = true;
 
-  # Enable sound with pipewire.
-  # services.pulseaudio.enable = true;
   programs.nix-ld.enable = true;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # jack.enable = true;
-    extraConfig.pipewire."92-low-latency" = {
-      "context.properties" = {
-        "default.clock.rate" = 48000;
-        "default.clock.quantum" = 1024; # Increased from default for stability
-        "default.clock.min-quantum" = 1024;
-        "default.clock.max-quantum" = 2048;
-      };
-    };
-    # Specific USB device configuration
-    wireplumber.configPackages = [
-      (pkgs.writeTextDir "share/wireplumber/main.lua.d/99-usb-headset.lua" ''
-        alsa_monitor.rules = {
-          {
-            matches = {{{ "node.name", "matches", "alsa_output.usb-DSEA_A_S_EPOS_IMPACT_860T*" }}};
-            apply_properties = {
-              ["audio.format"] = "S16LE",  # Your device uses 16-bit format
-              ["audio.rate"] = 48000,      # Match system rate
-              ["api.alsa.period-size"] = 1024,
-              ["api.alsa.headroom"] = 256,
-            },
-          },
-        }
-      '')
-    ];
-  };
-  hardware = {
-    graphics.enable = true;
-  };
-
-  #  bluetooth
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
-  hardware.bluetooth.package = pkgs.bluez;
-  services.blueman.enable = true;
   hardware.enableAllFirmware = true;
 
-  # hyprland
-  xdg.portal = {
-    enable = true;
-    xdgOpenUsePortal = true;
-    config = {
-      common.default = ["gtk"];
-      hyprland.default = ["gtk" "hyprland"];
-    };
-
-    extraPortals = [
-      pkgs.xdg-desktop-portal-gtk
-    ];
-  };
-  programs.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.default;
-    portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-    xwayland.enable = true;
-  };
-  # tell Electron/Chromium to run on Wayland
-  environment.variables.NIXOS_OZONE_WL = "1";
 
   environment.sessionVariables = {
     FLAKE = "/home/${username}/src/nixos";
@@ -140,18 +70,11 @@ in {
 
   hardware.uinput.enable = true; # req for xremap
   users.groups.uinput.members = ["${username}"]; # req for xremap
-  users.groups.input.members = ["${username}"]; # req for xremap # services.libinput.enable = true;
+  users.groups.input.members = ["${username}"]; # req for xremap
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
-  services.libinput = {
-    enable = true;
-    touchpad.naturalScrolling = true;
-    mouse.naturalScrolling = false;
-  };
 
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-
   environment.variables.EDITOR = "nvim";
   environment.variables.PYTHONPYCACHEPREFIX = "/tmp/pycache-dir";
 
@@ -161,13 +84,6 @@ in {
   networking.firewall.trustedInterfaces = ["tailscale0"];
   # allow the Tailscale UDP port through the firewall
   networking.firewall.allowedUDPPorts = [config.services.tailscale.port];
-
-  fonts.packages = with pkgs; [
-    nerd-fonts.blex-mono
-    nerd-fonts.hack
-    nerd-fonts.fira-code
-    ibm-plex
-  ];
 
   programs.virt-manager.enable = true;
   virtualisation = {
@@ -184,16 +100,6 @@ in {
       };
     };
     spiceUSBRedirection.enable = true;
-  };
-
-  services.flatpak.enable = true;
-  fonts.fontDir.enable = true;
-  fonts.fontconfig = {
-    defaultFonts = {
-      serif = ["IBM Plex Serif"];
-      sansSerif = ["IBM Plex Sans"];
-      monospace = ["BlexMono"];
-    };
   };
 
   system.stateVersion = "23.05"; # don't change this
