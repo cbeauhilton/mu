@@ -1,6 +1,8 @@
-{ config, inputs, ... }:
-
-let
+{
+  config,
+  inputs,
+  ...
+}: let
   username = "beau";
 in {
   imports = [
@@ -15,4 +17,4 @@ in {
     "/home/${username}/.ssh/id_rsa"
     "/home/${username}/.ssh/id_ed25519_pve"
   ];
-} 
+}

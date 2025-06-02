@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   fonts.packages = with pkgs; [
     nerd-fonts.blex-mono
     nerd-fonts.hack
@@ -16,4 +18,4 @@
       monospace = ["BlexMono"];
     };
   };
-} 
+}

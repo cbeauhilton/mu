@@ -15,6 +15,7 @@
     // Modules configuration
     "hyprland/workspaces": {
         "on-click": "activate",
+        "active-only": false,
     },
     "hyprland/window": {
       "format": "{title}",

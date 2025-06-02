@@ -20,12 +20,14 @@ in {
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   nix = {
     settings = {
       experimental-features = ["nix-command" "flakes"];
       accept-flake-config = true;
       warn-dirty = false;
       auto-optimise-store = true;
+      download-buffer-size = 500000000; # 500 MB
       trusted-users = ["beau" "@wheel" "root"];
     };
     gc = {
@@ -59,10 +61,10 @@ in {
 
   services.printing.enable = true;
   services.flatpak.enable = true;
+  services.fwupd.enable = true;
 
   programs.nix-ld.enable = true;
   hardware.enableAllFirmware = true;
-
 
   environment.sessionVariables = {
     FLAKE = "/home/${username}/src/nixos";

@@ -35,5 +35,6 @@
     zig
     terraform
     tenv
+    vim-full
   ];
 }

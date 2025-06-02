@@ -12,17 +12,30 @@
     xremap --watch .config/xremap/config.yml &
   '';
   terminal = "ghostty";
+  toggleLaptopScreen = pkgs.writeShellScriptBin "toggle-laptop-screen" ''
+    if [ $(${pkgs.hyprland}/bin/hyprctl monitors -j | ${pkgs.jq}/bin/jq '.[]|select(.description=="Lenovo Group Limited 0x4146").dpmsStatus') = "true" ]; then
+      sleep 1 && ${pkgs.hyprland}/bin/hyprctl dispatch dpms off eDP-1 
+      # eDP-1 doesn't change, 
+      # and the description didn't seem to work paired with the dpms command,
+      # but using eDP-1 works fine
+    else
+      ${pkgs.hyprland}/bin/hyprctl dispatch dpms on eDP-1
+    fi
+  '';
 in {
   home.packages = with pkgs; [
     wl-clipboard
-    # wlr-randr # don't think I need this anymore
     grim
     slurp
     brightnessctl
     inputs.hyprland-contrib.packages.x86_64-linux.grimblast
     neofetch
     waypaper
+    wdisplays
     swaybg # waypaper needs a backend, swaybg seems to work the best
+    pipes # terminal screensaver. For fun.
+    asciiquarium-transparent # another
+    jq # for the toggleLaptopScreen script, just in case it's not already installed
   ];
 
   # make stuff work on wayland
@@ -40,8 +53,8 @@ in {
     settings = {
       listener = [
         {
-          timeout = 60;
-          on-timeout = "hyprctl dispatch dpms off"; # just turns off the screen - save the OLED! idk if it actually matters in 2024, but why not.
+          timeout = 120;
+          on-timeout = "hyprctl dispatch dpms off"; # just turns off the screen - save the OLED
           on-resume = "hyprctl dispatch dpms on";
         }
       ];
@@ -59,16 +72,21 @@ in {
       exec-once = ''${startupScript}/bin/start'';
       input = {
         follow_mouse = 1;
-        natural_scroll = true;
+        natural_scroll = false;
         touchpad.natural_scroll = true;
       };
       # run hyprctl monitors all to see the names, use the descriptions so name (e.g. DP-4) reassignments don't cause issues
       monitor = [
-        "desc:Dell Inc. DELL P2417H FMXNR78C18KT, 1920x1080@60, 0x0, 1, transform, 1" # Left monitor (portrait)
-        "desc:Dell Inc. DELL P2419H 2SMZYR2, 1920x1080@60, 1080x0, 1" # Middle monitor (landscape)
-        "desc:Biomedical Systems Laboratory L3 PRO L3PRO-240328, 1920x860@60, 1080x1080, 1" # Bottom monitor (landscape)
-        "desc:Samsung Display Corp. 0x4165, 3840x2400@60, 3000x0, 2" # Laptop monitor (landscape, right)
-        ", preferred, auto, 1" # Fallback rule for any new monitors
+        # Laptop monitor (eDP-1) - 3840x2400@60Hz at position 4862x810, scale 2.0
+        "desc:Lenovo Group Limited 0x4146, 3840x2400@60, 4862x810, 2"
+        # Dell P2419H - 1920x1080@60Hz at position 2942x930, scale 1.0
+        "desc:Dell Inc. DELL P2419H 2SMZYR2, 1920x1080@60, 2942x930, 1"
+        # L3 PRO bottom monitor - 1920x860@60Hz at position 2942x2010, scale 1.0
+        "desc:Biomedical Systems Laboratory L3 PRO L3PRO-240328, 1920x860@60, 2942x2010, 1"
+        # Dell P2417H left monitor - 1920x1080@60Hz at position 1862x360, portrait (transform 1), scale 1.0
+        "desc:Dell Inc. DELL P2417H FMXNR78C18KT, 1920x1080@60, 1862x360, 1, transform, 1"
+        # Fallback rule for any new monitors
+        ", preferred, auto, 1"
       ];
       general = {
         gaps_in = 5;
@@ -110,6 +128,9 @@ in {
       env = [
         "GDK_SCALE,2"
         "XCURSOR_SIZE,24"
+        "WLR_EVDI_RENDER_DEVICE,/dev/dri/card1"
+        "WLR_DRM_DEVICES,/dev/dri/card1"
+        "WLR_NO_HARDWARE_CURSORS,1"
       ];
 
       workspace = [
@@ -151,9 +172,11 @@ in {
       "$mainMod" = "SUPER";
       bind = [
         "$mainMod, return, exec, ${terminal}"
+        "SHIFT CTRL, return, exec, ${terminal}"
         "$mainMod, w, exec, firefox"
         "$mainMod, q, killactive,"
         "$mainMod SHIFT, q, exit,"
+        "SHIFT CTRL, q, exit,"
         "$mainMod, f, fullscreen, 1"
         "$mainMod SHIFT, f, fullscreen, 0"
         "$mainMod, d, exec, rofi -show drun"
@@ -220,6 +243,9 @@ in {
         # move window to monitor
         "$mainMod SHIFT, bracketleft, movewindow, mon:-1"
         "$mainMod SHIFT, bracketright, movewindow, mon:+1"
+
+        # toggle laptop screen (OLED)
+        "$mainMod, o, exec, ${toggleLaptopScreen}/bin/toggle-laptop-screen"
       ];
 
       bindm = [

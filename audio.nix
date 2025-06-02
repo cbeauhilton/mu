@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   # Enable sound with pipewire
   security.rtkit.enable = true;
   services.pipewire = {
@@ -40,4 +42,4 @@
   hardware.bluetooth.powerOnBoot = true;
   hardware.bluetooth.package = pkgs.bluez;
   services.blueman.enable = true;
-} 
+}

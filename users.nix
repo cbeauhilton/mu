@@ -17,4 +17,10 @@ in {
       };
     };
   };
+  # add delay to avoid boot messages clobbering greetd
+  systemd.services.greetd = {
+    serviceConfig = {
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+    };
+  };
 }

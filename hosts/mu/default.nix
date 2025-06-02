@@ -1,7 +1,22 @@
 {...}: {
   imports = [];
-  powerManagement.powertop.enable = true; # enable powertop auto tuning on startup.
 
+  # thunderbolt/usb-c 4 (this AMD Ryzen 7840U system does not have TB but using bolt seems to help with compability)
+  services.hardware.bolt.enable = true;
+  boot.kernelParams = [
+    "pcie_ports=compat"
+    "pcie_port_pm=off"
+    "pcie_aspm.policy=performance"
+    "pci=nocrs"
+    "amd_iommu=on"
+    "iommu=pt"
+  ];
+  boot.extraModprobeConfig = ''
+    options typec_tcpm try_sink_vbus=1
+    options thunderbolt force_power=1
+  '';
+
+  powerManagement.powertop.enable = true; # enable powertop auto tuning on startup.
   services.system76-scheduler.settings.cfsProfiles.enable = true; # Better scheduling for CPU cycles - thanks System76!!!
   # services.thermald.enable = true;                                  # Enable thermald, the temperature management daemon. (only necessary if on Intel CPUs)
   services.power-profiles-daemon.enable = false; # Disable GNOMEs power management
