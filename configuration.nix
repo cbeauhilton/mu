@@ -7,14 +7,16 @@
   username = "beau";
 in {
   imports = [
+    ./audio.nix
+    ./hosts/mu/display.nix
+    ./shared/fonts.nix
+    ./shared/game.nix
     ./hardware-configuration.nix
-    ./users.nix
-    ./shared
+    # ./home
     ./hosts
     ./secrets.nix
-    ./audio.nix
-    ./display.nix
-    ./fonts.nix
+    ./shared
+    ./users.nix
   ];
 
   # Bootloader.
@@ -42,7 +44,6 @@ in {
   };
 
   networking.hostName = "mu";
-  networking.networkmanager.enable = true;
   time.timeZone = "America/Chicago";
   i18n.defaultLocale = "en_US.UTF-8";
   i18n.extraLocaleSettings = {
@@ -59,7 +60,6 @@ in {
 
   security.sudo.wheelNeedsPassword = false;
 
-  services.printing.enable = true;
   services.flatpak.enable = true;
   services.fwupd.enable = true;
 

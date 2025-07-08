@@ -1,6 +1,5 @@
 {...}: {
   imports = [
-    ./ncmpcpp
-    ./mopidy
+    ./music
   ];
 }

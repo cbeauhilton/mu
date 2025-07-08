@@ -94,7 +94,7 @@
               inherit inputs pkgs;
             };
             home-manager.users.beau.imports = [
-              ./home.nix
+              ./home/home.nix
             ];
           }
         ];

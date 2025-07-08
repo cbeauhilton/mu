@@ -12,10 +12,11 @@
     xremap --watch .config/xremap/config.yml &
   '';
   terminal = "ghostty";
+  browser = "firefox";
   toggleLaptopScreen = pkgs.writeShellScriptBin "toggle-laptop-screen" ''
     if [ $(${pkgs.hyprland}/bin/hyprctl monitors -j | ${pkgs.jq}/bin/jq '.[]|select(.description=="Lenovo Group Limited 0x4146").dpmsStatus') = "true" ]; then
-      sleep 1 && ${pkgs.hyprland}/bin/hyprctl dispatch dpms off eDP-1 
-      # eDP-1 doesn't change, 
+      sleep 1 && ${pkgs.hyprland}/bin/hyprctl dispatch dpms off eDP-1
+      # eDP-1 doesn't change,
       # and the description didn't seem to work paired with the dpms command,
       # but using eDP-1 works fine
     else
@@ -171,22 +172,26 @@ in {
 
       "$mainMod" = "SUPER";
       bind = [
-        "$mainMod, return, exec, ${terminal}"
-        "SHIFT CTRL, return, exec, ${terminal}"
-        "$mainMod, w, exec, firefox"
-        "$mainMod, q, killactive,"
-        "$mainMod SHIFT, q, exit,"
-        "SHIFT CTRL, q, exit,"
-        "$mainMod, f, fullscreen, 1"
-        "$mainMod SHIFT, f, fullscreen, 0"
-        "$mainMod, d, exec, rofi -show drun"
-        "$mainMod, r, exec, ${terminal} -e yazi"
-        "$mainMod SHIFT, r, exec, thunar"
-        "$mainMod, m, exec, ${terminal} -e ncmpcpp"
-        "$mainMod, t, togglefloating,"
         "$mainMod CTRL, t, togglespecialworkspace, magic"
+        "$mainMod SHIFT, f, fullscreen, 0"
+        "$mainMod SHIFT, q, exit,"
+        "$mainMod SHIFT, w, exec, ${terminal} -e impala"
         "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-        "$mainMod, V, exec, ${terminal} -e clipse"
+        "$mainMod, b, exec, ${terminal} -e bluetui"
+        "$mainMod, d, exec, ${terminal} -e lazydocker"
+        "$mainMod, f, fullscreen, 1"
+        "$mainMod, g, exec, flatpak run com.heroicgameslauncher.hgl"
+        "$mainMod, m, exec, ${terminal} -e ncmpcpp"
+        "$mainMod, q, killactive,"
+        "$mainMod, r, exec, ${terminal} -e yazi"
+        "$mainMod, return, exec, ${terminal}"
+        "$mainMod, space, exec, rofi -show drun"
+        "$mainMod, t, togglefloating,"
+        "$mainMod, v, exec, ${terminal} -e clipse"
+        "$mainMod, w, exec, ${browser}"
+        "SHIFT CTRL, q, exit,"
+        "SHIFT CTRL, return, exec, ${terminal}"
+        # "$mainMod SHIFT, r, exec, thunar"
 
         # grimblast's "copysave" both saves a file in the home directory and copies to clipboard
         "$mainMod SHIFT, c, exec, grimblast copysave area"
@@ -246,6 +251,33 @@ in {
 
         # toggle laptop screen (OLED)
         "$mainMod, o, exec, ${toggleLaptopScreen}/bin/toggle-laptop-screen"
+
+        # webapps
+        "$mainMod SHIFT, m, exec, ${browser} --new-window https://music.beauslab.casa"
+        "$mainMod, a, exec, ${browser} --new-window https://claude.ai"
+        "$mainMod, c, exec, ${browser} --new-window https://calendar.google.com"
+        "$mainMod, e, exec, ${browser} --new-window https://gmail.com"
+        "$mainMod SHIFT, e, exec, ${browser} --new-window https://app.fastmail.com"
+        "$mainMod, u, exec, ${browser} --new-window https://unifi.ui.com"
+
+        # stuff Claude suggested, some interesting stuff to build from
+        # "$mainMod, n, exec, ${browser} --app=https://notion.so"           # Notes/wiki
+        # "$mainMod, s, exec, ${browser} --app=https://open.spotify.com"    # Music
+        # "$mainMod, p, exec, ${browser} --app=https://web.whatsapp.com"    # Messaging
+        # "$mainMod, i, exec, ${browser} --app=https://instagram.com"       # Social
+        # "$mainMod, y, exec, ${browser} --app=https://youtube.com"         # Video
+        # "$mainMod, x, exec, ${browser} --app=https://x.com"               # Twitter/X
+        # "$mainMod SHIFT, n, exec, ${browser} --app=https://linear.app"    # Project management
+        # "$mainMod SHIFT, s, exec, ${browser} --app=https://slack.com"     # Team chat
+        # "$mainMod SHIFT, d, exec, ${browser} --app=https://discord.com"   # Discord
+        # "$mainMod SHIFT, p, exec, ${browser} --app=https://github.com"    # Code repos
+        # "$mainMod CTRL, g, exec, ${browser} --app=https://grafana.com"    # Monitoring
+        # "$mainMod CTRL, p, exec, ${browser} --app=https://prometheus.io"  # Metrics
+        # "$mainMod CTRL, d, exec, ${browser} --app=https://datadog.com"    # APM
+        # "$mainMod, z, exec, ${terminal} -e btop"                          # System monitor
+        # "$mainMod SHIFT, m, exec, ${terminal} -e cmatrix"                 # Fun terminal
+        # "$mainMod CTRL, c, exec, ${terminal} -e cal -3"                   # Quick calendar
+        # "$mainMod CTRL, w, exec, wdisplays"                               # Display settings
       ];
 
       bindm = [

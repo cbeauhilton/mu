@@ -1,10 +1,70 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   home.packages = with pkgs; [
+    # mopidy
+    mopidy-subidy
+    mopidy-mpd
   ];
+  services.mopidy = {
+    enable = true;
+    extensionPackages = with pkgs; [
+      mopidy-subidy
+      mopidy-mpd
+    ];
+    settings = {
+      file = {
+        enabled = true;
+        media_dirs = [
+          "/home/beau/media/music"
+        ];
+        follow_symlinks = false;
+        show_dotfiles = false;
+        excluded_file_extensions = [
+          ".html"
+          ".zip"
+          ".jpg"
+          ".jpeg"
+          ".png"
+          ".directory"
+          ".log"
+          ".nfo"
+          ".pdf"
+          ".txt"
+        ];
+      };
+      m3u = {
+        playlists_dir = "media/music/mopidy/playlists";
+      };
+      http = {
+        hostname = "0.0.0.0";
+      };
+      mpd = {
+        enabled = true;
+        hostname = "::1";
+        port = 6600;
+        max_connections = 20;
+        connection_timeout = 60;
+      };
+      subidy = {
+        enabled = true;
+        url = "https://music.beauslab.casa";
+        username = "admin";
+        password = "admin";
+        api_version = "1.16";
+      };
+      # might add spotify support at some point
+      # but tbh I like self-hosting more, better selection ;)
+      # spotify = {
+      # client_id = "${config.sops.secrets."spotify_id".path}";
+      # client_secret = "${config.sops.secrets."spotify_secret".path}";
+      # username = "${config.sops.secrets."spotify_username".path}";
+      # password = "${config.sops.secrets."spotify_password".path}";
+      # sops.secrets.spotify_id = {};
+      # sops.secrets.spotify_secret = {};
+      # sops.secrets.spotify_username = {};
+      # sops.secrets.spotify_password = {};
+      # };
+    };
+  };
   programs.ncmpcpp = {
     enable = true;
     settings = {

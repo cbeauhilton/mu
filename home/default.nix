@@ -4,7 +4,7 @@
     ./desktop
     ./media
     ./shell
-    ./work
+    # ./work
   ];
 
   home.file = {

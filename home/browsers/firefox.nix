@@ -10,7 +10,7 @@
       id = 0;
       name = "Default";
       isDefault = true;
-      extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
         # i-dont-care-about-cookies # ninja-cookie is better?
         # noscript
         # torrent-control # sends links to torrent client, idk if I actually want this

@@ -1,5 +1,19 @@
-{...}: {
-  imports = [];
+{
+  config,
+  pkgs,
+  ...
+}: let
+  # Toggle between iwd and NetworkManager for wireless management
+  useIwd = true; # Set to false to use NetworkManager instead
+in {
+  imports = [
+    (
+      if useIwd
+      then ../../shared/networking/iwd.nix
+      else ../../shared/networking/networkmanager.nix
+    )
+    ../../shared/printers.nix
+  ];
 
   # thunderbolt/usb-c 4 (this AMD Ryzen 7840U system does not have TB but using bolt seems to help with compability)
   services.hardware.bolt.enable = true;
@@ -18,7 +32,6 @@
 
   powerManagement.powertop.enable = true; # enable powertop auto tuning on startup.
   services.system76-scheduler.settings.cfsProfiles.enable = true; # Better scheduling for CPU cycles - thanks System76!!!
-  # services.thermald.enable = true;                                  # Enable thermald, the temperature management daemon. (only necessary if on Intel CPUs)
   services.power-profiles-daemon.enable = false; # Disable GNOMEs power management
   services.tlp = {
     # Enable TLP (better than gnomes internal power manager)
