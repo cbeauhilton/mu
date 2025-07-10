@@ -5,6 +5,7 @@
 }: {
   imports = [
     ./hyprland
+    ./foot
     ./ghostty
     ./xremap
     ./waybar
@@ -21,6 +22,7 @@
     graphviz
     libnotify
     pavucontrol # GUI for audio inputs/outputs
+    showmethekey
     sqlitebrowser
     wf-recorder
     wl-clipboard

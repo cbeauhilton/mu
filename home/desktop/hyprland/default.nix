@@ -11,7 +11,7 @@
     ${pkgs.waypaper}/bin/waypaper --resume &
     xremap --watch .config/xremap/config.yml &
   '';
-  terminal = "ghostty";
+  terminal = "foot";
   browser = "firefox";
   toggleLaptopScreen = pkgs.writeShellScriptBin "toggle-laptop-screen" ''
     if [ $(${pkgs.hyprland}/bin/hyprctl monitors -j | ${pkgs.jq}/bin/jq '.[]|select(.description=="Lenovo Group Limited 0x4146").dpmsStatus') = "true" ]; then
@@ -100,9 +100,11 @@ in {
       };
       decoration = {
         rounding = "10";
+        # rounding = "0"; # testing for speed
         active_opacity = 1.0;
         inactive_opacity = 0.9;
         blur = {
+          # enabled = false;
           enabled = true;
           size = 3;
           passes = 1;
@@ -148,9 +150,13 @@ in {
         "bordersize 0, floating:0, onworkspace:f[1]"
         "rounding 0, floating:0, onworkspace:f[1]"
         "float, class:(clipse)"
-        "size 622 652, class:(clipse)" # set the size of the window as necessary
+        "size 622 652, class:(clipse)"
+        # showmethekey stuff
+        "float,class:^(showmethekey-gtk)$"
+        "pin,class:^(showmethekey-gtk)$"
       ];
       animations = {
+        # enabled = false;
         enabled = true;
         bezier = [
           "wind, 0.05, 0.9, 0.1, 1.05"
@@ -172,37 +178,54 @@ in {
 
       "$mainMod" = "SUPER";
       bind = [
-        "$mainMod CTRL, t, togglespecialworkspace, magic"
-        "$mainMod SHIFT, f, fullscreen, 0"
+
+        "$mainMod, return, exec, ${terminal}"
+        "SHIFT CTRL, return, exec, ${terminal}" # in case, for whatever reason, SUPER isn't recognized
+
+        "$mainMod, q, killactive,"
         "$mainMod SHIFT, q, exit,"
-        "$mainMod SHIFT, w, exec, ${terminal} -e impala"
-        "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        "SHIFT CTRL, q, exit," # in case, for whatever reason, SUPER isn't recognized
+
+        
+        # TUIs
         "$mainMod, b, exec, ${terminal} -e bluetui"
         "$mainMod, d, exec, ${terminal} -e lazydocker"
-        "$mainMod, f, fullscreen, 1"
-        "$mainMod, g, exec, flatpak run com.heroicgameslauncher.hgl"
+        "$mainMod, i, exec, ${terminal} -e btop"
         "$mainMod, m, exec, ${terminal} -e ncmpcpp"
-        "$mainMod, q, killactive,"
         "$mainMod, r, exec, ${terminal} -e yazi"
-        "$mainMod, return, exec, ${terminal}"
-        "$mainMod, space, exec, rofi -show drun"
-        "$mainMod, t, togglefloating,"
         "$mainMod, v, exec, ${terminal} -e clipse"
+        "$mainMod SHIFT, w, exec, ${terminal} -e impala"
+        "$mainMod, space, exec, rofi -show drun"
+
+        # GUIs
         "$mainMod, w, exec, ${browser}"
-        "SHIFT CTRL, q, exit,"
-        "SHIFT CTRL, return, exec, ${terminal}"
+        "$mainMod, g, exec, flatpak run com.heroicgameslauncher.hgl"
         # "$mainMod SHIFT, r, exec, thunar"
+
+        # Webapps
+        "$mainMod SHIFT, m, exec, ${browser} --new-window https://music.beauslab.casa"
+        "$mainMod, a, exec, ${browser} --new-window https://claude.ai"
+        "$mainMod, c, exec, ${browser} --new-window https://calendar.google.com"
+        "$mainMod, e, exec, ${browser} --new-window https://gmail.com"
+        "$mainMod SHIFT, e, exec, ${browser} --new-window https://app.fastmail.com"
+        "$mainMod, u, exec, ${browser} --new-window https://unifi.ui.com"
 
         # grimblast's "copysave" both saves a file in the home directory and copies to clipboard
         "$mainMod SHIFT, c, exec, grimblast copysave area"
         "$mainMod SHIFT, x, exec, grimblast copysave active"
         "$mainMod SHIFT, z, exec, grimblast copysave output"
 
-        # DWM-style focus movement (only prev and next, no left and right)
+        # Tiling mgmt
+        "$mainMod, f, fullscreen, 1"
+        "$mainMod SHIFT, f, fullscreen, 0"
+        "$mainMod, t, togglefloating,"
+        # "$mainMod CTRL, t, togglespecialworkspace, magic" # idk why, this borks things
+        ## DWM-style focus movement (only prev and next, no left and right)
         "$mainMod, k, layoutmsg, cycleprev"
         "$mainMod, j, layoutmsg, cyclenext"
+        #
 
-        # Swap window with mainMod + shift + vim keys
+        ## Swap window with mainMod + shift + vim keys
         "$mainMod SHIFT, k, layoutmsg, swapprev"
         "$mainMod SHIFT, j, layoutmsg, swapnext"
         "$mainMod SHIFT, h, swapwindow, l"
@@ -210,9 +233,10 @@ in {
         "$mainMod SHIFT, u, layoutmsg, orientationcycle left top"
 
         # Grab rogue windows (e.g. after unplugging monitor)
-        "$mainMod, G, split:grabroguewindows"
+        # "$mainMod, G, split:grabroguewindows" # don't actually use this, seems like a nice feature tho
 
-        # Switch workspaces with mainMod + [0-9]
+        # Workspace mgmt
+        ## Switch workspaces with mainMod + [0-9]
         "$mainMod, 1, split:workspace, 1"
         "$mainMod, 2, split:workspace, 2"
         "$mainMod, 3, split:workspace, 3"
@@ -223,9 +247,13 @@ in {
         "$mainMod, 8, split:workspace, 8"
         "$mainMod, 9, split:workspace, 9"
         "$mainMod, 0, split:workspace, 10"
+        
+        ## Scroll through existing workspaces with mainMod + scroll
+        "$mainMod, mouse_down, split:workspace, e+1"
+        "$mainMod, mouse_up, split:workspace, e-1"
 
-        # Move active window to a workspace with mainMod + SHIFT + [0-9]
-        # "movetoworkspacesilent" means "don't autoswitch to the workspace you just moved the active window to"
+        ## Move active window to a workspace with mainMod + SHIFT + [0-9]
+        ### "movetoworkspacesilent" means "don't autoswitch to the workspace you just moved the active window to"
         "$mainMod SHIFT, 1, split:movetoworkspacesilent, 1"
         "$mainMod SHIFT, 2, split:movetoworkspacesilent, 2"
         "$mainMod SHIFT, 3, split:movetoworkspacesilent, 3"
@@ -237,28 +265,17 @@ in {
         "$mainMod SHIFT, 9, split:movetoworkspacesilent, 9"
         "$mainMod SHIFT, 0, split:movetoworkspacesilent, 10"
 
-        # Scroll through existing workspaces with mainMod + scroll
-        "$mainMod, mouse_down, split:workspace, e+1"
-        "$mainMod, mouse_up, split:workspace, e-1"
 
-        # focus monitor
+        # Monitor mgmt
         "$mainMod, bracketleft, focusmonitor, -1"
         "$mainMod, bracketright, focusmonitor, +1"
 
-        # move window to monitor
+        ## move window to monitor
         "$mainMod SHIFT, bracketleft, movewindow, mon:-1"
         "$mainMod SHIFT, bracketright, movewindow, mon:+1"
 
-        # toggle laptop screen (OLED)
+        ## toggle laptop screen (OLED)
         "$mainMod, o, exec, ${toggleLaptopScreen}/bin/toggle-laptop-screen"
-
-        # webapps
-        "$mainMod SHIFT, m, exec, ${browser} --new-window https://music.beauslab.casa"
-        "$mainMod, a, exec, ${browser} --new-window https://claude.ai"
-        "$mainMod, c, exec, ${browser} --new-window https://calendar.google.com"
-        "$mainMod, e, exec, ${browser} --new-window https://gmail.com"
-        "$mainMod SHIFT, e, exec, ${browser} --new-window https://app.fastmail.com"
-        "$mainMod, u, exec, ${browser} --new-window https://unifi.ui.com"
 
         # stuff Claude suggested, some interesting stuff to build from
         # "$mainMod, n, exec, ${browser} --app=https://notion.so"           # Notes/wiki
@@ -278,6 +295,8 @@ in {
         # "$mainMod SHIFT, m, exec, ${terminal} -e cmatrix"                 # Fun terminal
         # "$mainMod CTRL, c, exec, ${terminal} -e cal -3"                   # Quick calendar
         # "$mainMod CTRL, w, exec, wdisplays"                               # Display settings
+
+        "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
       ];
 
       bindm = [
@@ -292,8 +311,10 @@ in {
         "$mainMod, h, resizeactive, -20 0"
         "$mainMod, up, resizeactive, 0 -20"
         "$mainMod, down, resizeactive, 0 20"
+
         "$mainMod, Page_Up, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
         "$mainMod, Page_Down, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+
         ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
         ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
         ", XF86MonBrightnessUp, exec, brightnessctl set +5%"
