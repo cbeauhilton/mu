@@ -1,4 +1,4 @@
-{ pkgs }:
+{pkgs}:
 pkgs.writeShellScriptBin "start" ''
   ${pkgs.waybar}/bin/waybar &
   sleep 1

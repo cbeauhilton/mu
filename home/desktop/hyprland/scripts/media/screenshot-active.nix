@@ -1,7 +1,10 @@
-{ pkgs, inputs }:
+{
+  pkgs,
+  inputs,
+}:
 pkgs.writeShellScriptBin "screenshot-active" ''
-    mkdir -p ~/media/images/screenshots
-    timestamp=$(date +"%Y-%m-%dT%H:%M:%S")
-    filename="$HOME/media/images/screenshots/$timestamp.png"
-    ${inputs.hyprland-contrib.packages.x86_64-linux.grimblast}/bin/grimblast --notify copysave active "$filename"
+  mkdir -p ~/media/images/screenshots
+  timestamp=$(date +"%Y-%m-%dT%H:%M:%S")
+  filename="$HOME/media/images/screenshots/$timestamp.png"
+  ${inputs.hyprland-contrib.packages.x86_64-linux.grimblast}/bin/grimblast --notify copysave active "$filename"
 ''

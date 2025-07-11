@@ -1,9 +1,7 @@
-{...}:
-  let
-    font = "BlexMono Nerd Font";
-    fontsize = "10";
-  in
-  {
+{...}: let
+  font = "BlexMono Nerd Font";
+  fontsize = "10";
+in {
   programs.foot = {
     enable = true;
     server.enable = true; # Enables foot server for faster startup

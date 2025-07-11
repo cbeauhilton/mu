@@ -1,4 +1,4 @@
-{ pkgs }:
+{pkgs}:
 pkgs.writeShellScriptBin "screen-record" ''
   mkdir -p ~/media/videos/screenrecordings
   timestamp=$(date +"%Y-%m-%dT%H:%M:%S")

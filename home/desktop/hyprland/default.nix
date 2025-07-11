@@ -3,7 +3,7 @@
   inputs,
   ...
 }: let
-  scripts = import ./scripts { inherit pkgs inputs; };
+  scripts = import ./scripts {inherit pkgs inputs;};
   terminal = "foot";
   browser = "firefox";
 in {

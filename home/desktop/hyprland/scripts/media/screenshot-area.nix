@@ -1,4 +1,7 @@
-{ pkgs, inputs }:
+{
+  pkgs,
+  inputs,
+}:
 pkgs.writeShellScriptBin "screenshot-area" ''
   mkdir -p ~/media/images/screenshots
   timestamp=$(date +"%Y-%m-%dT%H:%M:%S")
