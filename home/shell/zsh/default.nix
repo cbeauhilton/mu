@@ -19,7 +19,7 @@
       export VISUAL="nvim"
       export PAGER="ov"
       export OPENER="xdg-open"
-      export TERMINAL="alacritty"
+      export TERMINAL="foot"
       export XCURSOR_THEME="Adwaita"
     '';
     plugins = [

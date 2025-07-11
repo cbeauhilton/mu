@@ -9,7 +9,6 @@
     # nvi # this is a nice version of vi, but breaking the install. idk.
     # oryx # TUI for sniffing traffic - not yet packaged for nix
     # somo # TUI for netstat - not yet packaged for nix
-    alacritty
     alejandra
     bitwarden
     bitwarden-cli

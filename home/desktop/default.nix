@@ -4,12 +4,13 @@
   ...
 }: {
   imports = [
-    ./hyprland
     ./foot
     ./ghostty
-    ./xremap
-    ./waybar
+    ./hyprland
     ./rofi
+    ./stylix
+    ./waybar
+    ./xremap
     ./zathura
     # ./ags
   ];
