@@ -1,16 +1,18 @@
-{ config, pkgs, ... }:
-
 {
+  config,
+  pkgs,
+  ...
+}: {
   # Enable printing
   services.printing.enable = true;
-  
+
   # Enable network discovery of printers
   services.avahi = {
     enable = true;
     nssmdns4 = true;
     openFirewall = true;
   };
-  
+
   # Your printer
   hardware.printers = {
     ensurePrinters = [

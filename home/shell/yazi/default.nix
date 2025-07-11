@@ -5,15 +5,17 @@
   ...
 }: {
   home.packages = with pkgs; [
-    ffmpegthumbnailer # video thumbnails
-    unar # archive preview
-    jq # JSON preview
-    poppler # pdf preview
+    # ueberzugpp # image preview - only needed if terminal doesn't have builtin image support
     fd # file searching
+    imv # image viewer (lightweight)
+    jq # JSON preview
+    ffmpegthumbnailer # video thumbnails
+    mpv # video and audio player
+    poppler # pdf preview
     ripgrep # file content searching
+    unar # archive preview
     fzf # directory jumping
     zoxide # directory jumping
-    ueberzugpp # image preview - only needed if terminal doesn't have builtin image support, e.g. Alacritty
   ];
   programs.yazi = {
     enable = true;
@@ -21,16 +23,38 @@
     keymap = {
     };
     settings = {
-      opener.text = [
-        {
-          run = "'${lib.getExe pkgs.neovim} \"$@\"'";
-        }
-      ];
+      opener = {
+        text = [
+          {
+            run = "'${lib.getExe pkgs.neovim} \"$@\"'";
+            desc = "Open in Vim";
+          }
+        ];
+        image = [
+          {
+            run = "${lib.getExe pkgs.imv} \"$@\"";
+            # run = "'${lib.getExe pkgs.imv} \"$@\"'";
+            desc = "View in imv";
+          }
+        ];
+        video = [
+          {
+            run = "'${lib.getExe pkgs.mpv} \"$@\"'";
+            desc = "Play in mpv";
+          }
+        ];
+        audio = [
+          {
+            run = "'${lib.getExe pkgs.mpv} \"$@\"'";
+            desc = "Play in mpv";
+          }
+        ];
+      };
       log = {
         enabled = true;
       };
       manager = {
-        show_hidden = true;
+        show_hidden = false;
         sort_by = "mtime";
         sort_dir_first = true;
         sort_reverse = true;

@@ -3,26 +3,9 @@
   inputs,
   ...
 }: let
-  startupScript = pkgs.pkgs.writeShellScriptBin "start" ''
-    ${pkgs.waybar}/bin/waybar &
-    sleep 1
-    ${pkgs.mako}/bin/mako &
-    ${pkgs.clipse}/bin/clipse -listen &
-    ${pkgs.waypaper}/bin/waypaper --resume &
-    xremap --watch .config/xremap/config.yml &
-  '';
+  scripts = import ./scripts { inherit pkgs inputs; };
   terminal = "foot";
   browser = "firefox";
-  toggleLaptopScreen = pkgs.writeShellScriptBin "toggle-laptop-screen" ''
-    if [ $(${pkgs.hyprland}/bin/hyprctl monitors -j | ${pkgs.jq}/bin/jq '.[]|select(.description=="Lenovo Group Limited 0x4146").dpmsStatus') = "true" ]; then
-      sleep 1 && ${pkgs.hyprland}/bin/hyprctl dispatch dpms off eDP-1
-      # eDP-1 doesn't change,
-      # and the description didn't seem to work paired with the dpms command,
-      # but using eDP-1 works fine
-    else
-      ${pkgs.hyprland}/bin/hyprctl dispatch dpms on eDP-1
-    fi
-  '';
 in {
   home.packages = with pkgs; [
     wl-clipboard
@@ -64,13 +47,14 @@ in {
 
   wayland.windowManager.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    package = null;
+    portalPackage = null;
     plugins = [
       inputs.hyprsplit.packages.${pkgs.system}.hyprsplit
       inputs.hyprgrass.packages.${pkgs.system}.default
     ];
     settings = {
-      exec-once = ''${startupScript}/bin/start'';
+      exec-once = ''${scripts.startupScript}/bin/start'';
       input = {
         follow_mouse = 1;
         natural_scroll = false;
@@ -80,11 +64,8 @@ in {
       monitor = [
         # Laptop monitor (eDP-1) - 3840x2400@60Hz at position 4862x810, scale 2.0
         "desc:Lenovo Group Limited 0x4146, 3840x2400@60, 4862x810, 2"
-        # Dell P2419H - 1920x1080@60Hz at position 2942x930, scale 1.0
         "desc:Dell Inc. DELL P2419H 2SMZYR2, 1920x1080@60, 2942x930, 1"
-        # L3 PRO bottom monitor - 1920x860@60Hz at position 2942x2010, scale 1.0
         "desc:Biomedical Systems Laboratory L3 PRO L3PRO-240328, 1920x860@60, 2942x2010, 1"
-        # Dell P2417H left monitor - 1920x1080@60Hz at position 1862x360, portrait (transform 1), scale 1.0
         "desc:Dell Inc. DELL P2417H FMXNR78C18KT, 1920x1080@60, 1862x360, 1, transform, 1"
         # Fallback rule for any new monitors
         ", preferred, auto, 1"
@@ -100,11 +81,9 @@ in {
       };
       decoration = {
         rounding = "10";
-        # rounding = "0"; # testing for speed
         active_opacity = 1.0;
         inactive_opacity = 0.9;
         blur = {
-          # enabled = false;
           enabled = true;
           size = 3;
           passes = 1;
@@ -156,7 +135,6 @@ in {
         "pin,class:^(showmethekey-gtk)$"
       ];
       animations = {
-        # enabled = false;
         enabled = true;
         bezier = [
           "wind, 0.05, 0.9, 0.1, 1.05"
@@ -178,7 +156,6 @@ in {
 
       "$mainMod" = "SUPER";
       bind = [
-
         "$mainMod, return, exec, ${terminal}"
         "SHIFT CTRL, return, exec, ${terminal}" # in case, for whatever reason, SUPER isn't recognized
 
@@ -186,7 +163,6 @@ in {
         "$mainMod SHIFT, q, exit,"
         "SHIFT CTRL, q, exit," # in case, for whatever reason, SUPER isn't recognized
 
-        
         # TUIs
         "$mainMod, b, exec, ${terminal} -e bluetui"
         "$mainMod, d, exec, ${terminal} -e lazydocker"
@@ -202,20 +178,28 @@ in {
         "$mainMod, g, exec, flatpak run com.heroicgameslauncher.hgl"
         # "$mainMod SHIFT, r, exec, thunar"
 
-        # Webapps
+        # webapps
         "$mainMod SHIFT, m, exec, ${browser} --new-window https://music.beauslab.casa"
         "$mainMod, a, exec, ${browser} --new-window https://claude.ai"
+        "$mainMod SHIFT, a, exec, ${browser} --new-window https://homeassistant:8123"
         "$mainMod, c, exec, ${browser} --new-window https://calendar.google.com"
         "$mainMod, e, exec, ${browser} --new-window https://gmail.com"
         "$mainMod SHIFT, e, exec, ${browser} --new-window https://app.fastmail.com"
         "$mainMod, u, exec, ${browser} --new-window https://unifi.ui.com"
 
         # grimblast's "copysave" both saves a file in the home directory and copies to clipboard
-        "$mainMod SHIFT, c, exec, grimblast copysave area"
-        "$mainMod SHIFT, x, exec, grimblast copysave active"
-        "$mainMod SHIFT, z, exec, grimblast copysave output"
+        "$mainMod SHIFT, c, exec, ${scripts.screenshotAreaScript}/bin/screenshot-area"
+        "$mainMod SHIFT, x, exec, ${scripts.screenshotActiveScript}/bin/screenshot-active"
+        "$mainMod SHIFT, z, exec, ${scripts.screenshotOutputScript}/bin/screenshot-output"
 
-        # Tiling mgmt
+        "$mainMod SHIFT, r, exec, ${scripts.screenRecordScript}/bin/screen-record"
+
+        # notification management
+        "$mainMod, n, exec, makoctl dismiss"
+        "$mainMod SHIFT, n, exec, makoctl restore"
+        "$mainMod CTRL, n, exec, makoctl dismiss --all"
+
+        # tiling mgmt
         "$mainMod, f, fullscreen, 1"
         "$mainMod SHIFT, f, fullscreen, 0"
         "$mainMod, t, togglefloating,"
@@ -223,19 +207,15 @@ in {
         ## DWM-style focus movement (only prev and next, no left and right)
         "$mainMod, k, layoutmsg, cycleprev"
         "$mainMod, j, layoutmsg, cyclenext"
-        #
 
-        ## Swap window with mainMod + shift + vim keys
+        ## swap window with mainMod + shift + vim keys
         "$mainMod SHIFT, k, layoutmsg, swapprev"
         "$mainMod SHIFT, j, layoutmsg, swapnext"
         "$mainMod SHIFT, h, swapwindow, l"
         "$mainMod SHIFT, l, swapwindow, r"
         "$mainMod SHIFT, u, layoutmsg, orientationcycle left top"
 
-        # Grab rogue windows (e.g. after unplugging monitor)
-        # "$mainMod, G, split:grabroguewindows" # don't actually use this, seems like a nice feature tho
-
-        # Workspace mgmt
+        # workspace mgmt
         ## Switch workspaces with mainMod + [0-9]
         "$mainMod, 1, split:workspace, 1"
         "$mainMod, 2, split:workspace, 2"
@@ -247,12 +227,12 @@ in {
         "$mainMod, 8, split:workspace, 8"
         "$mainMod, 9, split:workspace, 9"
         "$mainMod, 0, split:workspace, 10"
-        
-        ## Scroll through existing workspaces with mainMod + scroll
+
+        ## scroll through existing workspaces with mainMod + scroll
         "$mainMod, mouse_down, split:workspace, e+1"
         "$mainMod, mouse_up, split:workspace, e-1"
 
-        ## Move active window to a workspace with mainMod + SHIFT + [0-9]
+        ## move active window to a workspace with mainMod + SHIFT + [0-9]
         ### "movetoworkspacesilent" means "don't autoswitch to the workspace you just moved the active window to"
         "$mainMod SHIFT, 1, split:movetoworkspacesilent, 1"
         "$mainMod SHIFT, 2, split:movetoworkspacesilent, 2"
@@ -265,8 +245,7 @@ in {
         "$mainMod SHIFT, 9, split:movetoworkspacesilent, 9"
         "$mainMod SHIFT, 0, split:movetoworkspacesilent, 10"
 
-
-        # Monitor mgmt
+        # monitor mgmt
         "$mainMod, bracketleft, focusmonitor, -1"
         "$mainMod, bracketright, focusmonitor, +1"
 
@@ -275,27 +254,9 @@ in {
         "$mainMod SHIFT, bracketright, movewindow, mon:+1"
 
         ## toggle laptop screen (OLED)
-        "$mainMod, o, exec, ${toggleLaptopScreen}/bin/toggle-laptop-screen"
+        "$mainMod, o, exec, ${scripts.toggleLaptopScreen}/bin/toggle-laptop-screen"
 
-        # stuff Claude suggested, some interesting stuff to build from
-        # "$mainMod, n, exec, ${browser} --app=https://notion.so"           # Notes/wiki
-        # "$mainMod, s, exec, ${browser} --app=https://open.spotify.com"    # Music
-        # "$mainMod, p, exec, ${browser} --app=https://web.whatsapp.com"    # Messaging
-        # "$mainMod, i, exec, ${browser} --app=https://instagram.com"       # Social
-        # "$mainMod, y, exec, ${browser} --app=https://youtube.com"         # Video
-        # "$mainMod, x, exec, ${browser} --app=https://x.com"               # Twitter/X
-        # "$mainMod SHIFT, n, exec, ${browser} --app=https://linear.app"    # Project management
-        # "$mainMod SHIFT, s, exec, ${browser} --app=https://slack.com"     # Team chat
-        # "$mainMod SHIFT, d, exec, ${browser} --app=https://discord.com"   # Discord
-        # "$mainMod SHIFT, p, exec, ${browser} --app=https://github.com"    # Code repos
-        # "$mainMod CTRL, g, exec, ${browser} --app=https://grafana.com"    # Monitoring
-        # "$mainMod CTRL, p, exec, ${browser} --app=https://prometheus.io"  # Metrics
-        # "$mainMod CTRL, d, exec, ${browser} --app=https://datadog.com"    # APM
-        # "$mainMod, z, exec, ${terminal} -e btop"                          # System monitor
-        # "$mainMod SHIFT, m, exec, ${terminal} -e cmatrix"                 # Fun terminal
-        # "$mainMod CTRL, c, exec, ${terminal} -e cal -3"                   # Quick calendar
-        # "$mainMod CTRL, w, exec, wdisplays"                               # Display settings
-
+        ## toggle volume/mute
         "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
       ];
 
