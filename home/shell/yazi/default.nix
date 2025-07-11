@@ -3,7 +3,14 @@
   pkgs,
   lib,
   ...
-}: {
+}: let
+  yazi-plugins = pkgs.fetchFromGitHub {
+    owner = "yazi-rs";
+    repo = "plugins";
+    rev = "b8860253fc44e500edeb7a09db648a829084facd";
+    hash = "sha256-29K8PmBoqAMcQhDIfOVnbJt2FU4BR6k23Es9CqyEloo=";
+  };
+in {
   home.packages = with pkgs; [
     # ueberzugpp # image preview - only needed if terminal doesn't have builtin image support
     fd # file searching
@@ -20,8 +27,64 @@
   programs.yazi = {
     enable = true;
     enableZshIntegration = true;
-    keymap = {
+    shellWrapperName = "y";
+
+    plugins = {
+      chmod = "${yazi-plugins}/chmod.yazi";
+      full-border = "${yazi-plugins}/full-border.yazi";
+      toggle-pane = "${yazi-plugins}/toggle-pane.yazi";
+      git = "${yazi-plugins}/git.yazi";
+      mount = "${yazi-plugins}/mount.yazi";
+      zoom = "${yazi-plugins}/zoom.yazi";
+      starship = pkgs.fetchFromGitHub {
+        owner = "Rolv-Apneseth";
+        repo = "starship.yazi";
+        rev = "a63550b2f91f0553cc545fd8081a03810bc41bc0";
+        sha256 = "sha256-PYeR6fiWDbUMpJbTFSkM57FzmCbsB4W4IXXe25wLncg=";
+      };
     };
+
+    initLua = ''
+      require("full-border"):setup()
+      require("starship"):setup()
+      require("git"):setup()
+    '';
+
+    keymap = {
+      mgr.prepend_keymap = [
+        {
+          on = "T";
+          run = "plugin toggle-pane max-preview";
+          desc = "Maximize or restore the preview pane";
+        }
+        {
+          on = ["c" "m"];
+          run = "plugin chmod";
+          desc = "Chmod on selected files";
+        }
+        {
+          on = "!";
+          run = "shell \"$SHELL\" --block --confirm";
+          desc = "Open shell here";
+        }
+        {
+          on = "M";
+          run = "plugin mount";
+          desc = "Mount/unmount drives";
+        }
+        {
+          on = "+";
+          run = "plugin zoom 1";
+          desc = "Zoom in hovered file";
+        }
+        {
+          on = "-";
+          run = "plugin zoom -1";
+          desc = "Zoom out hovered file";
+        }
+      ];
+    };
+
     settings = {
       opener = {
         text = [
@@ -58,11 +121,22 @@
         sort_by = "mtime";
         sort_dir_first = true;
         sort_reverse = true;
-        prepend_keymap = [
+      };
+      preview = {
+        max_width = 1000;
+        max_height = 1000;
+      };
+      plugin = {
+        prepend_fetchers = [
           {
-            on = "!";
-            run = "shell \"$SHELL\" --block --confirm";
-            desc = "Open shell here";
+            id = "git";
+            name = "*";
+            run = "git";
+          }
+          {
+            id = "git";
+            name = "*/";
+            run = "git";
           }
         ];
       };
