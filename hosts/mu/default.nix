@@ -12,7 +12,7 @@ in {
       then ../../shared/networking/iwd.nix
       else ../../shared/networking/networkmanager.nix
     )
-    ../../shared/printers.nix
+    # ../../shared/printers.nix
   ];
 
   # thunderbolt/usb-c 4 (this AMD Ryzen 7840U system does not have TB but using bolt seems to help with compability)

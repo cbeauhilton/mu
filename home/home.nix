@@ -24,6 +24,7 @@
     yq-go # yaml processor https://github.com/mikefarah/yq
     eza # A modern replacement for ‘ls’
     fzf # A command-line fuzzy finder
+    kdePackages.dolphin
 
     # networking tools
     mtr # A network diagnostic tool
@@ -76,7 +77,28 @@
     nerd-fonts.fira-code
     nerd-fonts.droid-sans-mono
     ibm-plex
+
+    (pkgs.writeShellScriptBin "newpy" ''
+      dir_name="''${1:-python-project}"
+      mkdir -p "$dir_name"
+      ${pkgs.git}/bin/git clone git@github.com:clementpoiret/nix-python-devenv.git "$dir_name"
+      cd "$dir_name"
+    '')
+    inputs.naviterm.packages.${pkgs.system}.default
   ];
+
+  home.file.".config/naviterm/naviterm.ini".text = ''
+    server_address=https://music.beauslab.casa
+    user=admin
+    password=admin
+    server_auth=token
+    primary_accent=yellow
+    secondary_accent=gray
+    home_list_size=30
+    follow_cursor_queue=true
+    draw_while_unfocused=false
+    save_player_status=true
+  '';
 
   programs.git = {
     enable = true;

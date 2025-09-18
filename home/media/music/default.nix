@@ -1,4 +1,6 @@
-{pkgs, ...}: {
+{pkgs, ...}: let
+  musicDir = "/home/beau/media/music";
+in {
   home.packages = with pkgs; [
     # mopidy
     mopidy-subidy
@@ -9,37 +11,41 @@
     extensionPackages = with pkgs; [
       mopidy-subidy
       mopidy-mpd
+      # mopidy-local
     ];
     settings = {
       file = {
         enabled = true;
         media_dirs = [
-          "/home/beau/media/music"
+          "${musicDir}"
         ];
-        follow_symlinks = false;
-        show_dotfiles = false;
-        excluded_file_extensions = [
-          ".html"
-          ".zip"
-          ".jpg"
-          ".jpeg"
-          ".png"
-          ".directory"
-          ".log"
-          ".nfo"
-          ".pdf"
-          ".txt"
-        ];
+        # follow_symlinks = false;
+        # show_dotfiles = false;
+        # excluded_file_extensions = [
+        #   ".html"
+        #   ".zip"
+        #   ".jpg"
+        #   ".jpeg"
+        #   ".png"
+        #   ".directory"
+        #   ".log"
+        #   ".nfo"
+        #   ".pdf"
+        #   ".txt"
+        # ];
       };
       m3u = {
-        playlists_dir = "media/music/mopidy/playlists";
+        enabled = true;
+        playlists_dir = "${musicDir}/mopidy/playlists";
+        default_encoding = "utf-8";
+        default_extension = ".m3u8";
       };
       http = {
         hostname = "0.0.0.0";
       };
       mpd = {
         enabled = true;
-        hostname = "::1";
+        hostname = "localhost";
         port = 6600;
         max_connections = 20;
         connection_timeout = 60;
@@ -68,8 +74,8 @@
   programs.ncmpcpp = {
     enable = true;
     settings = {
-      ncmpcpp_directory = "~/.local/share/ncmpcpp";
-      lyrics_directory = "~/.local/share/lyrics";
+      ncmpcpp_directory = "${musicDir}/ncmpcpp";
+      lyrics_directory = "${musicDir}/lyrics";
       progressbar_look = "->";
       display_volume_level = "no";
       autocenter_mode = "yes";
@@ -83,6 +89,9 @@
       ignore_diacritics = "yes";
       external_editor = "vim";
       use_console_editor = "yes";
+      startup_screen = "browser";
+      mpd_host = "localhost";
+      mpd_port = 6600;
     };
     bindings = [
       {

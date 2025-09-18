@@ -17,6 +17,7 @@ in {
     ./secrets.nix
     ./shared
     ./users.nix
+    ./meshtastic.nix
   ];
 
   # Bootloader.
@@ -25,12 +26,19 @@ in {
   boot.kernelPackages = pkgs.linuxPackages_latest;
   nix = {
     settings = {
-      experimental-features = ["nix-command" "flakes"];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       accept-flake-config = true;
       warn-dirty = false;
       auto-optimise-store = true;
       download-buffer-size = 500000000; # 500 MB
-      trusted-users = ["beau" "@wheel" "root"];
+      trusted-users = [
+        "beau"
+        "@wheel"
+        "root"
+      ];
     };
     gc = {
       automatic = true;

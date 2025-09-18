@@ -63,6 +63,7 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    naviterm.url = "gitlab:detoxify92/naviterm";
   };
 
   outputs = {

@@ -167,7 +167,7 @@ in {
         "$mainMod, b, exec, ${terminal} -e bluetui"
         "$mainMod, d, exec, ${terminal} -e lazydocker"
         "$mainMod, i, exec, ${terminal} -e btop"
-        "$mainMod, m, exec, ${terminal} -e ncmpcpp"
+        "$mainMod, m, exec, ${terminal} -e naviterm"
         "$mainMod, r, exec, ${terminal} -e yazi"
         "$mainMod, v, exec, ${terminal} -e clipse"
         "$mainMod SHIFT, w, exec, ${terminal} -e impala"
@@ -181,7 +181,7 @@ in {
         # webapps
         "$mainMod SHIFT, m, exec, ${browser} --new-window https://music.beauslab.casa"
         "$mainMod, a, exec, ${browser} --new-window https://claude.ai"
-        "$mainMod SHIFT, a, exec, ${browser} --new-window https://homeassistant:8123"
+        "$mainMod SHIFT, a, exec, ${browser} --new-window https://ha.pve.flowergarden.beauhilton.com"
         "$mainMod, c, exec, ${browser} --new-window https://calendar.google.com"
         "$mainMod, e, exec, ${browser} --new-window https://gmail.com"
         "$mainMod SHIFT, e, exec, ${browser} --new-window https://app.fastmail.com"

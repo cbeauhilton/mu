@@ -8,7 +8,7 @@
     ./ghostty
     ./hyprland
     ./rofi
-    ./stylix
+    # ./stylix
     ./waybar
     ./xremap
     ./zathura

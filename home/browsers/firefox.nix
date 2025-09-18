@@ -21,7 +21,7 @@
         darkreader
         decentraleyes
         linkding-extension
-        ninja-cookie # auto-declines non-essential cookies
+        # ninja-cookie # auto-declines non-essential cookies
         privacy-badger
         rsshub-radar
         stylus
@@ -49,7 +49,8 @@
         "browser.shell.checkDefaultBrowser" = false;
         "browser.shell.defaultBrowserCheckCount" = 1;
         "identity.fxaccounts.enabled" = false;
-        "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.section.highlights.includePocket" = false;
+        "services.sync.prefs.sync-seen.browser.newtabpage.activity-stream.section.highlights.includePocket" =
+          false;
         "signon.rememberSignons" = false; # prefer BitWarden
         "trailhead.firstrun.didSeeAboutWelcome" = true;
       };

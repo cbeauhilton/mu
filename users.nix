@@ -6,7 +6,15 @@ in {
   users.users."${username}" = {
     isNormalUser = true;
     description = "${username}";
-    extraGroups = ["docker" "networkmanager" "wheel" "audio" "pipewire" "libvirtd"];
+    extraGroups = [
+      "docker"
+      "networkmanager"
+      "wheel"
+      "audio"
+      "pipewire"
+      "libvirtd"
+      "dialout"
+    ];
   };
   services.greetd = {
     enable = true;
@@ -20,7 +28,7 @@ in {
   # add delay to avoid boot messages clobbering greetd
   systemd.services.greetd = {
     serviceConfig = {
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 2";
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 4";
     };
   };
 }
