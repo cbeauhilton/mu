@@ -6,14 +6,17 @@
 }: {
   programs.firefox = {
     enable = true;
+    # package = pkgs.librewolf;
+    package = pkgs.firefox-esr;
+    # package = null; # set to null to uninstall
     profiles.default = {
       id = 0;
       name = "Default";
       isDefault = true;
       extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
         # i-dont-care-about-cookies # ninja-cookie is better?
-        # noscript
-        # torrent-control # sends links to torrent client, idk if I actually want this
+        noscript
+        torrent-control # sends links to torrent client, idk if I actually want this
         aria2-integration
         bitwarden
         clearurls

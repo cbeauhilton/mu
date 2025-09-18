@@ -6,16 +6,13 @@
     "margin-right": 10,
     "margin-top": 5, 
     
-    // Choose the order of the modules
-
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["clock"],
     "modules-right": ["network", "cpu", "memory", "temperature", "pulseaudio", "battery", "tray"],
 
-    // Modules configuration
     "hyprland/workspaces": {
         "on-click": "activate",
-        "active-only": false,
+        "active-only": false
     },
     "hyprland/window": {
       "format": "{title}",
@@ -37,7 +34,6 @@
     },
 
     "tray": {
-        // "icon-size": 21,
         "spacing": 10
     },
     "clock": {
@@ -46,10 +42,7 @@
         "format-alt": "{:%Y-%m-%d}"
     },
    "temperature": {
-        // "thermal-zone": 2,
-        // "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
         "critical-threshold": 80,
-        // "format-critical": "{temperatureC}°C {icon}",
         "format": "{temperatureC}°C {icon}",
         "format-icons": ["", "", ""]
     },
@@ -64,13 +57,11 @@
         "on-click": "$TERMINAL -e btop"
     },
     "backlight": {
-        // "device": "acpi_video1",
         "format": "{percent}% {icon}",
         "format-icons": ["", "", "", "", "", "", "", "", ""]
     },
     "battery": {
         "states": {
-            // "good": 70,
             "warning": 20,
             "critical": 10
         },
@@ -78,16 +69,13 @@
         "format-charging": "{capacity}% \ueea1",
         "format-plugged": "{capacity}% ",
         "format-alt": "{time} {icon}",
-        // "format-good": "", // An empty format will hide the module
-        // "format-full": "",
         "format-icons": ["", "", "", "", ""]
     },
     "battery#bat2": {
         "bat": "BAT2"
     },
     "network": {
-        // "interface": "wlp2*", // (Optional) To force the use of this interface
-        "format-wifi": "{essid} ", //({signalStrength}%) 
+        "format-wifi": "{essid} ",
         "format-ethernet": "{ipaddr}/{cidr}",
         "tooltip-format": "{ifname} via {gwaddr}",
         "format-linked": "{ifname} (No IP)",
@@ -95,10 +83,9 @@
         "format-alt": "{ifname}: {ipaddr}/{cidr}"
     },
     "pulseaudio": {
-        // "scroll-step": 1, // %, can be a float
-        "format": "{volume}% {icon}", //{format_source}",
-        "format-bluetooth": "{volume}% {icon} 󰂯", //{format_source}",
-        "format-bluetooth-muted": "󰖁 {icon} 󰂯", //{format_source}",
+        "format": "{volume}% {icon}",
+        "format-bluetooth": "{volume}% {icon} 󰂯",
+        "format-bluetooth-muted": "󰖁 {icon} 󰂯",
         "format-muted": "󰖁 {format_source}",
         "format-source": "{volume}% ",
         "format-source-muted": "",
