@@ -23,7 +23,11 @@ in {
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelPackages = pkgs.linuxPackages_zen;
+  # boot.kernelParams = [
+  #   "initcall_blacklist=simpledrm_platform_driver_init"
+  # ];
   nix = {
     settings = {
       experimental-features = [
@@ -84,7 +88,12 @@ in {
   users.defaultUserShell = pkgs.zsh;
   programs.zsh.enable = true;
 
-  nixpkgs.config.allowUnfree = true;
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+      "python3.13-ecdsa-0.19.1"
+    ];
+  };
   environment.variables.EDITOR = "nvim";
   environment.variables.PYTHONPYCACHEPREFIX = "/tmp/pycache-dir";
 
@@ -105,8 +114,6 @@ in {
       qemu = {
         package = pkgs.qemu_kvm;
         swtpm.enable = true;
-        ovmf.enable = true;
-        ovmf.packages = [pkgs.OVMFFull.fd];
       };
     };
     spiceUSBRedirection.enable = true;

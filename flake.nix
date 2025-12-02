@@ -68,53 +68,46 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     naviterm.url = "gitlab:detoxify92/naviterm";
-    zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      ...
-    }@inputs:
-    let
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = [
-          inputs.nur.overlays.default
-        ];
-        config = {
-          allowUnfree = true;
-        };
-      };
-      username = "beau";
-      system = "x86_64-linux";
-    in
-    {
-      nixosConfigurations = {
-        mu = nixpkgs.lib.nixosSystem {
-          specialArgs = {
-            inherit inputs;
-          };
-          modules = [
-            ./configuration.nix
-
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = {
-                inherit inputs pkgs;
-              };
-              home-manager.users.beau.imports = [
-                ./home/home.nix
-              ];
-            }
-          ];
-        };
+  outputs = {
+    self,
+    nixpkgs,
+    ...
+  } @ inputs: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs {
+      inherit system;
+      overlays = [
+        inputs.nur.overlays.default
+      ];
+      config = {
+        allowUnfree = true;
       };
     };
+    username = "beau";
+  in {
+    nixosConfigurations = {
+      mu = nixpkgs.lib.nixosSystem {
+        specialArgs = {
+          inherit inputs;
+        };
+        modules = [
+          ./configuration.nix
+
+          inputs.home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = {
+              inherit inputs pkgs;
+            };
+            home-manager.users.beau.imports = [
+              ./home/home.nix
+            ];
+          }
+        ];
+      };
+    };
+  };
 }

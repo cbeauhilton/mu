@@ -10,7 +10,7 @@
     # oryx # TUI for sniffing traffic - not yet packaged for nix
     # somo # TUI for netstat - not yet packaged for nix
     alejandra
-    bitwarden
+    bitwarden-desktop
     bitwarden-cli
     bluetui # TUI for bluetooth
     bun
@@ -24,9 +24,11 @@
     junction # use as default browser to add selection, haven't implemented yet, seems cool
     just
     libgcc
+    gcc # C compiler for nvim-treesitter
+    tree-sitter # CLI for nvim-treesitter
     mpv
     neovim
-    nh
+    # nh
     openssl
     pnpm
     postgresql

@@ -29,11 +29,10 @@
     ov
     pavucontrol
     ripgrep
-    xdragon
+    dragon-drop
     ansible
     ansible-lint
-    terraform-providers.ansible
-    ansible-language-server
+    terraform-providers.nbering_ansible
     python312Packages.ansible-vault-rw
     whois
   ];
@@ -55,6 +54,9 @@
     vim = "nvim";
     g = "git";
     mkdir = "mkdir -p";
+  };
+  programs.nh = {
+    enable = true;
   };
   programs.imv = {
     enable = true;

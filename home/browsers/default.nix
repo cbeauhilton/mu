@@ -1,8 +1,7 @@
-{ ... }:
-{
+{...}: {
   imports = [
     ./firefox.nix
-    ./zen.nix
+    # ./zen.nix
   ];
 
   programs.chromium.enable = true;

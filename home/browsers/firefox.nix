@@ -7,7 +7,7 @@
   programs.firefox = {
     enable = true;
     # package = pkgs.librewolf;
-    package = pkgs.firefox-esr;
+    # package = pkgs.firefox-esr; # default is pkgs.firefox
     # package = null; # set to null to uninstall
     profiles.default = {
       id = 0;

@@ -3,8 +3,7 @@
   pkgs,
   inputs,
   ...
-}:
-{
+}: {
   imports = [
     ../home
   ];
@@ -103,8 +102,12 @@
 
   programs.git = {
     enable = true;
-    userName = "Beau Hilton";
-    userEmail = "beau@beauhilton.com";
+    settings = {
+      user = {
+        name = "Beau Hilton";
+        email = "beau@beauhilton.com";
+      };
+    };
   };
   programs.neovim.viAlias = true;
   programs.neovim.vimAlias = true;

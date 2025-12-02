@@ -110,9 +110,6 @@ in {
       env = [
         "GDK_SCALE,2"
         "XCURSOR_SIZE,24"
-        "WLR_EVDI_RENDER_DEVICE,/dev/dri/card1"
-        "WLR_DRM_DEVICES,/dev/dri/card1"
-        "WLR_NO_HARDWARE_CURSORS,1"
       ];
 
       workspace = [
@@ -121,18 +118,26 @@ in {
         "f[1], gapsout:0, gapsin:0"
       ];
 
-      windowrulev2 = [
-        "bordersize 0, floating:0, onworkspace:w[t1]"
-        "rounding 0, floating:0, onworkspace:w[t1]"
-        "bordersize 0, floating:0, onworkspace:w[tg1]"
-        "rounding 0, floating:0, onworkspace:w[tg1]"
-        "bordersize 0, floating:0, onworkspace:f[1]"
-        "rounding 0, floating:0, onworkspace:f[1]"
-        "float, class:(clipse)"
-        "size 622 652, class:(clipse)"
-        # showmethekey stuff
-        "float,class:^(showmethekey-gtk)$"
-        "pin,class:^(showmethekey-gtk)$"
+      windowrule = [
+        # Rules for tiled workspaces (w[t1])
+        "border_size 0, match:workspace w[t1], match:float 0"
+        "rounding 0, match:workspace w[t1], match:float 0"
+
+        # Rules for tiled group workspaces (w[tg1])
+        "border_size 0, match:workspace w[tg1], match:float 0"
+        "rounding 0, match:workspace w[tg1], match:float 0"
+
+        # Rules for fullscreen workspaces (f[1])
+        "border_size 0, match:workspace f[1], match:float 0"
+        "rounding 0, match:workspace f[1], match:float 0"
+
+        # Clipse window rules
+        "float on, match:class (clipse)"
+        "size 622 652, match:class (clipse)"
+
+        # Showmethekey rules
+        "float on, match:class ^(showmethekey-gtk)$"
+        "pin on, match:class ^(showmethekey-gtk)$"
       ];
       animations = {
         enabled = true;

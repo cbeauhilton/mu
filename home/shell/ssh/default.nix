@@ -27,6 +27,13 @@
         User terraform
         IdentityFile ~/.ssh/id_ed25519_pve
         IdentitiesOnly yes
+
+      Host forgejo.lab.beauhilton.com
+        HostName forgejo.lab.beauhilton.com
+        User git
+        IdentityFile ~/.ssh/id_ed25519
+        IdentitiesOnly yes
+        StrictHostKeyChecking no
     '';
   };
 }

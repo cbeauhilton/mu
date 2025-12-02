@@ -22,6 +22,14 @@
       export TERMINAL="foot"
       export XCURSOR_THEME="Adwaita"
     '';
+    initContent = ''
+      # Handle Cursor Agent terminal - load shell integration and exit early
+      # This prevents hanging issues with interactive components like Starship and Atuin
+      if [[ "$CURSOR_AGENT" == "1" ]] || [[ "$TERM_PROGRAM" == "vscode" ]]; then
+        . "$(cursor --locate-shell-integration-path zsh)"
+        return
+      fi
+    '';
     plugins = [
       {
         name = "zsh-autosuggestions";

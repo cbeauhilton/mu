@@ -17,9 +17,6 @@
 
   hardware.graphics.enable = true;
 
-  boot.extraModulePackages = with config.boot.kernelPackages; [evdi];
-  boot.kernelModules = ["evdi"];
-
   xdg.portal = {
     enable = true;
     xdgOpenUsePortal = true;
