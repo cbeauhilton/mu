@@ -28,6 +28,12 @@
         IdentityFile ~/.ssh/id_ed25519_pve
         IdentitiesOnly yes
 
+      Host proxmox
+        HostName 10.0.0.42
+        User root
+        IdentityFile ~/.ssh/id_ed25519_pve
+        IdentitiesOnly yes
+
       Host forgejo.lab.beauhilton.com
         HostName forgejo.lab.beauhilton.com
         User git

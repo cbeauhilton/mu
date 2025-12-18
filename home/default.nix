@@ -4,6 +4,7 @@
     ./desktop
     ./media
     ./shell
+    ./nvim
     # ./work
   ];
 

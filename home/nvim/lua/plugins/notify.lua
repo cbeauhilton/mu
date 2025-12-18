@@ -1,9 +1,7 @@
 return {
   {
     "rcarriga/nvim-notify",
-    opts = {
-      level = 4,
-    },
+    enabled = false, -- Disabled because LazyVim includes Noice.nvim which conflicts
   },
 }
 
