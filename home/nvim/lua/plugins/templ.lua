@@ -10,6 +10,24 @@ return {
           templ = "templ",
         },
       })
+
+      -- Configure templ parser after treesitter is available
+      -- The parser is provided by NixOS, but we need to configure it for nvim-treesitter
+      -- See: https://github.com/vrischmann/tree-sitter-templ
+      vim.defer_fn(function()
+        local ok, parsers = pcall(require, "nvim-treesitter.parsers")
+        if ok and parsers.get_parser_configs then
+          local parser_config = parsers.get_parser_configs()
+          parser_config.templ = {
+            install_info = {
+              url = "https://github.com/vrischmann/tree-sitter-templ",
+              files = { "src/parser.c", "src/scanner.c" },
+              branch = "main",
+            },
+            filetype = "templ",
+          }
+        end
+      end, 100)
     end,
     opts = function(_, opts)
       -- Add templ to ensure_installed
@@ -17,20 +35,6 @@ return {
       vim.list_extend(opts.ensure_installed, {
         "templ",
       })
-    end,
-    config = function(_, opts)
-      -- Configure templ parser
-      -- The parser is provided by NixOS, but we need to configure it for nvim-treesitter
-      -- See: https://github.com/vrischmann/tree-sitter-templ
-      local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-      parser_config.templ = {
-        install_info = {
-          url = "https://github.com/vrischmann/tree-sitter-templ",
-          files = { "src/parser.c", "src/scanner.c" },
-          branch = "main",
-        },
-        filetype = "templ",
-      }
     end,
   },
 
