@@ -15,6 +15,7 @@
     bitwarden-cli
     bluetui # TUI for bluetooth
     bun
+    claude-code
     curl
     devenv
     lazydocker
@@ -33,6 +34,7 @@
     go
     gotools
     go-task
+    natscli
     templ
     tree-sitter # CLI for nvim-treesitter
     mpv
@@ -45,6 +47,8 @@
     postgresql
     rustup
     sops
+    sqlite
+    sqlite-interactive
     systemctl-tui
     statix
     teams-for-linux

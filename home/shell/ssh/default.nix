@@ -1,45 +1,70 @@
 {
   programs.ssh = {
     enable = true;
-    # enableDefaultConfig = false;
-    extraConfig = ''
-      AddKeysToAgent yes
-      Host *
-        StrictHostKeyChecking no
+    enableDefaultConfig = false;
 
-      Host ssh.dev.azure.com
-        IdentityFile ~/.ssh/id_rsa
-        IdentitiesOnly yes
+    matchBlocks = {
+      "*" = {
+        forwardAgent = false;
+        compression = false;
+        serverAliveInterval = 0;
+        serverAliveCountMax = 3;
+        hashKnownHosts = false;
+        userKnownHostsFile = "~/.ssh/known_hosts";
+        controlMaster = "no";
+        controlPath = "~/.ssh/master-%r@%n:%p";
+        controlPersist = "no";
+        extraOptions = {
+          AddKeysToAgent = "yes";
+          StrictHostKeyChecking = "no";
+        };
+      };
 
-      Host github.com
-        IdentityFile ~/.ssh/id_ed25519
-        IdentitiesOnly yes
+      "ssh.dev.azure.com" = {
+        user = "git";
+        identityFile = "~/.ssh/id_rsa";
+        identitiesOnly = true;
+      };
 
-      Host vultr
-        HostName 100.89.237.126
-        User beau
+      "github.com" = {
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519";
+        identitiesOnly = true;
+      };
 
-      Host pve
-        HostName pve
-        User root
+      vultr = {
+        hostname = "100.89.237.126";
+        user = "beau";
+      };
 
-      Host pve
-        User terraform
-        IdentityFile ~/.ssh/id_ed25519_pve
-        IdentitiesOnly yes
+      pve = {
+        hostname = "pve";
+        user = "root";
+      };
 
-      Host proxmox
-        HostName 10.0.0.42
-        User root
-        IdentityFile ~/.ssh/id_ed25519_pve
-        IdentitiesOnly yes
+      pve-terraform = {
+        hostname = "pve";
+        user = "terraform";
+        identityFile = "~/.ssh/id_ed25519_pve";
+        identitiesOnly = true;
+      };
 
-      Host forgejo.lab.beauhilton.com
-        HostName forgejo.lab.beauhilton.com
-        User git
-        IdentityFile ~/.ssh/id_ed25519
-        IdentitiesOnly yes
-        StrictHostKeyChecking no
-    '';
+      proxmox = {
+        hostname = "10.0.0.42";
+        user = "root";
+        identityFile = "~/.ssh/id_ed25519_pve";
+        identitiesOnly = true;
+      };
+
+      "forgejo.lab.beauhilton.com" = {
+        hostname = "forgejo.lab.beauhilton.com";
+        user = "git";
+        identityFile = "~/.ssh/id_ed25519";
+        identitiesOnly = true;
+        extraOptions = {
+          StrictHostKeyChecking = "no";
+        };
+      };
+    };
   };
 }

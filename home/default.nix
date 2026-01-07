@@ -2,6 +2,7 @@
   imports = [
     ./browsers
     ./desktop
+    ./dev
     ./media
     ./shell
     ./nvim
