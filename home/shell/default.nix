@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{...}: {
   imports = [
     ./atuin
     ./ssh
@@ -7,23 +7,6 @@
   ];
 
   home = {
-    packages = with pkgs; [
-      alejandra
-      bc
-      delta
-      fd
-      ncdu
-      nil
-      ov
-      pavucontrol
-      ripgrep
-      dragon-drop
-      ansible
-      ansible-lint
-      terraform-providers.nbering_ansible
-      python312Packages.ansible-vault-rw
-      whois
-    ];
     sessionVariables = {
       EDITOR = "nvim";
       BROWSER = "firefox";

@@ -14,68 +14,6 @@
   ];
 
   home = {
-    packages = with pkgs; [
-      arandr
-      clipse
-      code-cursor
-      discord-ptb
-      ffmpeg
-      graphviz
-      libnotify
-      pavucontrol
-      showmethekey
-      sqlitebrowser
-      wf-recorder
-      wl-clipboard
-      zotero
-      neofetch
-      zip
-      xz
-      unzip
-      p7zip
-      ripgrep
-      jq
-      yq-go
-      eza
-      fzf
-      mtr
-      iperf3
-      dnsutils
-      ldns
-      aria2
-      socat
-      nmap
-      ipcalc
-      age
-      cowsay
-      file
-      gawk
-      gnupg
-      gnused
-      gnutar
-      tree
-      which
-      zstd
-      nix-output-monitor
-      hugo
-      glow
-      btop
-      iotop
-      iftop
-      strace
-      ltrace
-      lsof
-      sysstat
-      lm_sensors
-      ethtool
-      pciutils
-      usbutils
-      nerd-fonts.blex-mono
-      nerd-fonts.hack
-      nerd-fonts.fira-code
-      nerd-fonts.droid-sans-mono
-      ibm-plex
-    ];
     pointerCursor = {
       gtk.enable = true;
       x11.enable = true;

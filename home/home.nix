@@ -1,70 +1,9 @@
-{
-  pkgs,
-  inputs,
-  ...
-}: {
+{...}: {
   imports = [../home];
 
   home = {
     username = "beau";
     stateVersion = "23.11";
-    packages = with pkgs; [
-      neofetch
-      zip
-      xz
-      unzip
-      p7zip
-      ripgrep
-      jq
-      yq-go
-      eza
-      fzf
-      kdePackages.dolphin
-      mtr
-      iperf3
-      dnsutils
-      ldns
-      aria2
-      socat
-      nmap
-      ipcalc
-      age
-      cowsay
-      file
-      gawk
-      gnupg
-      gnused
-      gnutar
-      tree
-      which
-      zstd
-      nix-output-monitor
-      hugo
-      glow
-      btop
-      iotop
-      iftop
-      strace
-      ltrace
-      lsof
-      sysstat
-      lm_sensors
-      ethtool
-      pciutils
-      usbutils
-      nerd-fonts.blex-mono
-      nerd-fonts.hack
-      nerd-fonts.fira-code
-      nerd-fonts.droid-sans-mono
-      ibm-plex
-      (pkgs.writeShellScriptBin "newpy" ''
-        dir_name="''${1:-python-project}"
-        mkdir -p "$dir_name"
-        ${pkgs.git}/bin/git clone git@github.com:clementpoiret/nix-python-devenv.git "$dir_name"
-        cd "$dir_name"
-      '')
-      inputs.naviterm.packages.${pkgs.system}.default
-    ];
     file.".config/naviterm/naviterm.ini".text = ''
       server_address=https://music.beauslab.casa
       user=admin

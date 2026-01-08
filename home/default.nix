@@ -5,6 +5,7 @@
     ./dev
     ./media
     ./nvim
+    ./packages
     ./shell
     ./work # conditional via work.azure.enable
   ];
