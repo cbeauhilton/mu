@@ -77,11 +77,7 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  } @ inputs: let
+  outputs = {nixpkgs, ...} @ inputs: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
@@ -93,7 +89,6 @@
         allowUnfree = true;
       };
     };
-    username = "beau";
 
     pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
       src = ./.;
@@ -104,10 +99,10 @@
       };
     };
 
-    monitorsLib = import ./lib/monitors.nix {lib = nixpkgs.lib;};
+    monitorsLib = import ./lib/monitors.nix {inherit (nixpkgs) lib;};
   in {
     checks.${system} = {
-      pre-commit-check = pre-commit-check;
+      inherit pre-commit-check;
     };
 
     devShells.${system}.default = pkgs.mkShell {

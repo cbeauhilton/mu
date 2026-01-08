@@ -1,8 +1,4 @@
-{
-  config,
-  inputs,
-  ...
-}: let
+{inputs, ...}: let
   username = "beau";
 in {
   imports = [

@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: let
+_: let
   # Toggle between iwd and NetworkManager for wireless management
   useIwd = true; # Set to false to use NetworkManager instead
 in {

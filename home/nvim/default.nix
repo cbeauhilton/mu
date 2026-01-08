@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   # Neovim program configuration
   programs.neovim = {
     viAlias = true;

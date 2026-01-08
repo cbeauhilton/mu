@@ -104,7 +104,7 @@ in {
 
   programs.rofi = {
     enable = true;
-    theme = theme;
+    inherit theme;
 
     plugins = with pkgs; [
       rofi-emoji

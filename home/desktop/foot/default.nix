@@ -1,4 +1,4 @@
-{...}: let
+_: let
   font = "BlexMono Nerd Font";
   fontsize = "10";
 in {

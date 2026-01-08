@@ -1,8 +1,4 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   services.udev.packages = [
     (pkgs.writeTextDir "etc/udev/rules.d/70-meshtastic.rules" ''
       # Seeed T1000E
