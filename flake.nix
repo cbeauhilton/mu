@@ -81,13 +81,8 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
-      overlays = [
-        inputs.nur.overlays.default
-        inputs.claude-code.overlays.default
-      ];
-      config = {
-        allowUnfree = true;
-      };
+      overlays = import ./overlays {inherit inputs;};
+      config.allowUnfree = true;
     };
 
     pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
