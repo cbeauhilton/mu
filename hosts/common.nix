@@ -1,3 +1,4 @@
+# Common NixOS configuration shared across all hosts
 {
   config,
   pkgs,
@@ -6,24 +7,18 @@
   username = "beau";
 in {
   imports = [
-    ./audio.nix
-    ./hosts/mu/display.nix
-    ./shared/fonts.nix
-    ./shared/game.nix
-    ./hardware-configuration.nix
-    ./hosts
-    ./secrets.nix
-    ./shared
-    ./users.nix
-    ./meshtastic.nix
+    ../audio.nix
+    ../secrets.nix
+    ../shared
+    ../shared/fonts.nix
+    ../shared/game.nix
+    ../users.nix
+    ../meshtastic.nix
   ];
 
-  boot = {
-    loader = {
-      systemd-boot.enable = true;
-      efi.canTouchEfiVariables = true;
-    };
-    kernelPackages = pkgs.linuxPackages_zen;
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
   };
 
   nix = {
@@ -46,15 +41,10 @@ in {
     '';
   };
 
-  networking = {
-    hostName = "mu";
-    firewall = {
-      trustedInterfaces = ["tailscale0"];
-      allowedUDPPorts = [config.services.tailscale.port];
-    };
+  networking.firewall = {
+    trustedInterfaces = ["tailscale0"];
+    allowedUDPPorts = [config.services.tailscale.port];
   };
-
-  time.timeZone = "America/Chicago";
 
   i18n = {
     defaultLocale = "en_US.UTF-8";
@@ -122,6 +112,4 @@ in {
     };
     spiceUSBRedirection.enable = true;
   };
-
-  system.stateVersion = "23.05";
 }

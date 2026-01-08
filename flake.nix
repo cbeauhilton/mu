@@ -115,7 +115,7 @@
           inherit inputs;
         };
         modules = [
-          ./configuration.nix
+          ./hosts/mu/configuration.nix
 
           inputs.home-manager.nixosModules.home-manager
           {
