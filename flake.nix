@@ -124,16 +124,16 @@
 
           inputs.home-manager.nixosModules.home-manager
           {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = {
-              inherit inputs pkgs;
-              monitors = monitorsLib.hosts.mu;
-              inherit monitorsLib;
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = {
+                inherit inputs pkgs;
+                monitors = monitorsLib.hosts.mu;
+                inherit monitorsLib;
+              };
+              users.beau.imports = [./home/home.nix];
             };
-            home-manager.users.beau.imports = [
-              ./home/home.nix
-            ];
           }
         ];
       };

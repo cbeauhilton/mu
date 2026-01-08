@@ -1,17 +1,12 @@
 {pkgs, ...}: {
-  imports = [
-  ];
-
-  # Enable Steam for compatibility and runtime
-  programs.steam = {
-    enable = true;
-    # remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-    # dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
+  programs = {
+    steam.enable = true;
+    gamescope.enable = true;
+    gamemode = {
+      enable = true;
+      settings.general.inhibit_screensaver = 0;
+    };
   };
-
-  # Enable gaming tools
-  programs.gamescope.enable = true;
-  programs.gamemode.enable = true;
 
   environment.systemPackages = with pkgs; [
     (heroic.override {
@@ -23,21 +18,12 @@
     })
   ];
 
-  users.users.beau = {
-    extraGroups = ["gamemode"];
-  };
+  users.users.beau.extraGroups = ["gamemode"];
 
-  # Roblox
+  # Roblox flatpak repo
   systemd.services.flatpak-repo = {
     wantedBy = ["multi-user.target"];
     path = [pkgs.flatpak];
-    script = ''flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo     '';
-  };
-
-  programs.gamemode.settings = {
-    general = {
-      # Disable screensaver inhibitor if you don't have a screensaver
-      inhibit_screensaver = 0;
-    };
+    script = "flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo";
   };
 }

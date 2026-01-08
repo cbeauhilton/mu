@@ -11,7 +11,6 @@ in {
     ./shared/fonts.nix
     ./shared/game.nix
     ./hardware-configuration.nix
-    # ./home
     ./hosts
     ./secrets.nix
     ./shared
@@ -19,29 +18,22 @@ in {
     ./meshtastic.nix
   ];
 
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  # boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.kernelPackages = pkgs.linuxPackages_zen;
-  # boot.kernelParams = [
-  #   "initcall_blacklist=simpledrm_platform_driver_init"
-  # ];
+  boot = {
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+    kernelPackages = pkgs.linuxPackages_zen;
+  };
+
   nix = {
     settings = {
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
+      experimental-features = ["nix-command" "flakes"];
       accept-flake-config = true;
       warn-dirty = false;
       auto-optimise-store = true;
-      download-buffer-size = 500000000; # 500 MB
-      trusted-users = [
-        "beau"
-        "@wheel"
-        "root"
-      ];
+      download-buffer-size = 500000000;
+      trusted-users = ["beau" "@wheel" "root"];
     };
     gc = {
       automatic = true;
@@ -54,60 +46,73 @@ in {
     '';
   };
 
-  networking.hostName = "mu";
+  networking = {
+    hostName = "mu";
+    firewall = {
+      trustedInterfaces = ["tailscale0"];
+      allowedUDPPorts = [config.services.tailscale.port];
+    };
+  };
+
   time.timeZone = "America/Chicago";
-  i18n.defaultLocale = "en_US.UTF-8";
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
+
+  i18n = {
+    defaultLocale = "en_US.UTF-8";
+    extraLocaleSettings = {
+      LC_ADDRESS = "en_US.UTF-8";
+      LC_IDENTIFICATION = "en_US.UTF-8";
+      LC_MEASUREMENT = "en_US.UTF-8";
+      LC_MONETARY = "en_US.UTF-8";
+      LC_NAME = "en_US.UTF-8";
+      LC_NUMERIC = "en_US.UTF-8";
+      LC_PAPER = "en_US.UTF-8";
+      LC_TELEPHONE = "en_US.UTF-8";
+      LC_TIME = "en_US.UTF-8";
+    };
   };
 
   security.sudo.wheelNeedsPassword = false;
 
-  services.flatpak.enable = true;
-  services.fwupd.enable = true;
-
-  programs.nix-ld.enable = true;
-  hardware.enableAllFirmware = true;
-
-  environment.sessionVariables = {
-    FLAKE = "/home/${username}/src/nixos";
+  services = {
+    flatpak.enable = true;
+    fwupd.enable = true;
+    tailscale.enable = true;
   };
 
-  hardware.uinput.enable = true; # req for xremap
-  users.groups.uinput.members = ["${username}"]; # req for xremap
-  users.groups.input.members = ["${username}"]; # req for xremap
-  users.defaultUserShell = pkgs.zsh;
-  programs.zsh.enable = true;
+  programs = {
+    nix-ld.enable = true;
+    zsh.enable = true;
+    virt-manager.enable = true;
+  };
+
+  hardware = {
+    enableAllFirmware = true;
+    uinput.enable = true; # req for xremap
+  };
+
+  environment = {
+    sessionVariables.FLAKE = "/home/${username}/src/nixos";
+    variables = {
+      EDITOR = "nvim";
+      PYTHONPYCACHEPREFIX = "/tmp/pycache-dir";
+    };
+  };
+
+  users = {
+    groups = {
+      uinput.members = [username]; # req for xremap
+      input.members = [username]; # req for xremap
+    };
+    defaultUserShell = pkgs.zsh;
+  };
 
   nixpkgs.config = {
     allowUnfree = true;
-    permittedInsecurePackages = [
-      "python3.13-ecdsa-0.19.1"
-    ];
+    permittedInsecurePackages = ["python3.13-ecdsa-0.19.1"];
   };
-  environment.variables.EDITOR = "nvim";
-  environment.variables.PYTHONPYCACHEPREFIX = "/tmp/pycache-dir";
 
-  ### tailscale
-  services.tailscale.enable = true;
-  # always allow traffic from your Tailscale network
-  networking.firewall.trustedInterfaces = ["tailscale0"];
-  # allow the Tailscale UDP port through the firewall
-  networking.firewall.allowedUDPPorts = [config.services.tailscale.port];
-
-  programs.virt-manager.enable = true;
   virtualisation = {
-    docker = {
-      enable = true;
-    };
+    docker.enable = true;
     libvirtd = {
       enable = true;
       qemu = {
@@ -118,5 +123,5 @@ in {
     spiceUSBRedirection.enable = true;
   };
 
-  system.stateVersion = "23.05"; # don't change this
+  system.stateVersion = "23.05";
 }

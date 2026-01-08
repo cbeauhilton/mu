@@ -34,8 +34,10 @@
   };
 
   # Bluetooth audio support
-  hardware.bluetooth.enable = true;
-  hardware.bluetooth.powerOnBoot = true;
-  hardware.bluetooth.package = pkgs.bluez;
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+    package = pkgs.bluez;
+  };
   services.blueman.enable = true;
 }
