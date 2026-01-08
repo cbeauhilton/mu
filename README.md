@@ -34,21 +34,7 @@ Personal NixOS flake with home-manager integration.
 
 ## Quick Commands
 
-```bash
-# Rebuild and switch
-nh os switch
-
-# Edit secrets
-sops secrets/secrets.yaml
-
-# Check before committing (runs automatically via pre-commit)
-alejandra .       # Format
-statix check      # Lint
-deadnix -e        # Find unused code
-
-# Update flake inputs
-nix flake update
-```
+See `justfile` for available commands (`just` to list). Pre-commit hooks run automatically.
 
 ## Adding a New Host
 
