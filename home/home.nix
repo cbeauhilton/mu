@@ -1,6 +1,11 @@
 {...}: {
   imports = [../home];
 
+  # Enable optional modules for this host
+  browsers.chrome-debug.enable = true;
+  media.music.enable = true;
+  # work.azure.enable = false; # uncomment when needed
+
   home = {
     username = "beau";
     stateVersion = "23.11";
