@@ -44,27 +44,14 @@
       url = "github:horriblename/hyprgrass";
       inputs.hyprland.follows = "hyprland";
     };
-    Hyprspace = {
-      # workspace overview feature
-      url = "github:KZDKM/Hyprspace";
-      inputs.hyprland.follows = "hyprland";
-    };
     hyprland-contrib = {
       url = "github:hyprwm/contrib";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprland-plugins = {
-      url = "github:hyprwm/hyprland-plugins";
-      inputs.hyprland.follows = "hyprland";
     };
     hyprsplit = {
       # dwm-like workspace manager - breaks sometimes
       url = "github:shezdy/hyprsplit";
       inputs.hyprland.follows = "hyprland";
-    };
-    stylix = {
-      url = "github:danth/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
