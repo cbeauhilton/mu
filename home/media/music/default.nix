@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  config,
+  ...
+}: let
   musicDir = "/home/beau/media/music";
 in {
   home.packages = with pkgs; [
@@ -12,6 +16,10 @@ in {
       mopidy-subidy
       mopidy-mpd
       # mopidy-local
+    ];
+    # Include subidy credentials from sops template
+    extraConfigFiles = [
+      config.sops.templates."mopidy-subidy.conf".path
     ];
     settings = {
       file = {
@@ -50,13 +58,7 @@ in {
         max_connections = 20;
         connection_timeout = 60;
       };
-      subidy = {
-        enabled = true;
-        url = "https://music.beauslab.casa";
-        username = "admin";
-        password = "admin";
-        api_version = "1.16";
-      };
+      # subidy credentials managed via sops - see extraConfigFiles below
       # might add spotify support at some point
       # but tbh I like self-hosting more, better selection ;)
       # spotify = {

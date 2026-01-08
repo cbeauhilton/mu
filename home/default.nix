@@ -6,6 +6,7 @@
     ./media
     ./nvim
     ./packages
+    ./secrets
     ./shell
     ./work # conditional via work.azure.enable
   ];

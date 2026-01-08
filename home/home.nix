@@ -4,18 +4,7 @@
   home = {
     username = "beau";
     stateVersion = "23.11";
-    file.".config/naviterm/naviterm.ini".text = ''
-      server_address=https://music.beauslab.casa
-      user=admin
-      password=admin
-      server_auth=token
-      primary_accent=yellow
-      secondary_accent=gray
-      home_list_size=30
-      follow_cursor_queue=true
-      draw_while_unfocused=false
-      save_player_status=true
-    '';
+    # naviterm config is now managed via sops template in home/secrets/
   };
 
   fonts.fontconfig.enable = true;
