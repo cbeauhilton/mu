@@ -114,7 +114,7 @@
                 monitors = monitorsLib.hosts.mu;
                 inherit monitorsLib;
               };
-              users.beau.imports = [./home/home.nix];
+              users.beau.imports = [./home/hosts/mu.nix];
             };
           }
         ];

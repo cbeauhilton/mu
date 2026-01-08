@@ -1,15 +1,20 @@
+# Common home-manager configuration shared across all hosts
 {...}: {
-  imports = [../home];
+  imports = [
+    ./browsers
+    ./desktop
+    ./dev
+    ./media
+    ./nvim
+    ./packages
+    ./secrets
+    ./shell
+    ./work
+  ];
 
-  # Enable optional modules for this host
-  browsers.chrome-debug.enable = true;
-  media.music.enable = true;
-  # work.azure.enable = false; # uncomment when needed
-
-  home = {
-    username = "beau";
-    stateVersion = "23.11";
-    # naviterm config is now managed via sops template in home/secrets/
+  home.file.".config/nvim" = {
+    source = ./nvim;
+    recursive = true;
   };
 
   fonts.fontconfig.enable = true;

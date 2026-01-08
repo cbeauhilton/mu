@@ -1,18 +1,3 @@
-{...}: {
-  imports = [
-    ./browsers
-    ./desktop
-    ./dev
-    ./media
-    ./nvim
-    ./packages
-    ./secrets
-    ./shell
-    ./work # conditional via work.azure.enable
-  ];
-
-  home.file.".config/nvim" = {
-    source = ./nvim;
-    recursive = true;
-  };
-}
+# Home configurations are loaded via home/hosts/<hostname>.nix
+# See home/common.nix for shared configuration
+_: {}
