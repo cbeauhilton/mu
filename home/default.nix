@@ -4,15 +4,13 @@
     ./desktop
     ./dev
     ./media
-    ./shell
     ./nvim
-    # ./work
+    ./shell
+    ./work # conditional via work.azure.enable
   ];
 
-  home.file = {
-    ".config/nvim" = {
-      source = ./nvim;
-      recursive = true;
-    };
+  home.file.".config/nvim" = {
+    source = ./nvim;
+    recursive = true;
   };
 }
