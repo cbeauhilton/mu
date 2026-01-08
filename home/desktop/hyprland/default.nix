@@ -1,9 +1,11 @@
 {
   pkgs,
   inputs,
+  monitors,
+  monitorsLib,
   ...
 }: let
-  scripts = import ./scripts {inherit pkgs inputs;};
+  scripts = import ./scripts {inherit pkgs inputs monitors;};
   terminal = "foot";
   browser = "firefox";
 in {
@@ -60,16 +62,8 @@ in {
         natural_scroll = false;
         touchpad.natural_scroll = true;
       };
-      # run hyprctl monitors all to see the names, use the descriptions so name (e.g. DP-4) reassignments don't cause issues
-      monitor = [
-        # Laptop monitor (eDP-1) - 3840x2400@60Hz at position 4862x810, scale 2.0
-        "desc:Lenovo Group Limited 0x4146, 3840x2400@60, 4862x810, 2"
-        "desc:Dell Inc. DELL P2419H 2SMZYR2, 1920x1080@60, 2942x930, 1"
-        "desc:Biomedical Systems Laboratory L3 PRO L3PRO-240328, 1920x860@60, 2942x2010, 1"
-        "desc:Dell Inc. DELL P2417H FMXNR78C18KT, 1920x1080@60, 1862x360, 1, transform, 1"
-        # Fallback rule for any new monitors
-        ", preferred, auto, 1"
-      ];
+      # Monitor config from lib/monitors.nix - run `hyprctl monitors all` to see descriptions
+      monitor = monitorsLib.toHyprlandConfig monitors;
       general = {
         gaps_in = 5;
         gaps_out = 5;

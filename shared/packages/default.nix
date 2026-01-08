@@ -15,13 +15,14 @@
     bitwarden-cli
     bluetui # TUI for bluetooth
     bun
-    claude-code
+    # claude-code
     curl
     devenv
     lazydocker
     docker
     docker-compose
     dust
+    gh
     google-chrome
     golangci-lint
     golangci-lint-langserver
@@ -42,6 +43,7 @@
     nats-top
     neovim
     # nh
+    nodejs # Required for pnpm/npm packages (MCP servers, etc)
     openssl
     pnpm
     postgresql
