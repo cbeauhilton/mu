@@ -169,7 +169,7 @@ src/nixos/home/dev/
 6. [x] Test with `nh os switch` ✅ 2026-01-09
 7. [x] Verify hooks still work after restart ✅ 2026-01-09
 8. [ ] Delete ~/.claude and rebuild to test full declarative flow
-9. [ ] Commit all changes
+9. [x] Commit all changes ✅ 2026-01-09
 
 **Note:** Browser skill is now declarative too! Source stored in `pai-skills/Browser/`,
 copied to `~/.claude/skills/Browser/` on activation with `bun install` for dependencies.

@@ -97,6 +97,18 @@ in {
         source = ./pai-skills/Browser;
         recursive = true;
       };
+
+      # Datastar skill - hypermedia UI framework philosophy + reference
+      ".claude/skills/Datastar" = {
+        source = ./pai-skills/Datastar;
+        recursive = true;
+      };
+
+      # EventSource skill - SQLite event sourcing for progress tracking
+      ".claude/skills/EventSource" = {
+        source = ./pai-skills/EventSource;
+        recursive = true;
+      };
     };
 
     # Activation script to:

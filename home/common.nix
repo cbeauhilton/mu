@@ -58,7 +58,7 @@
       enable = true;
       enableCompletion = true;
       bashrcExtra = ''
-        export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$HOME/go/bin"
+        export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$GOPATH/bin"
       '';
       shellAliases = {
         urldecode = "python3 -c 'import sys, urllib.parse as ul; print(ul.unquote_plus(sys.stdin.read()))'";

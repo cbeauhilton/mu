@@ -1,4 +1,6 @@
 {
+  services.ssh-agent.enable = true;
+
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;
@@ -59,6 +61,15 @@
       "forgejo.lab.beauhilton.com" = {
         hostname = "forgejo.lab.beauhilton.com";
         user = "git";
+        identityFile = "~/.ssh/id_ed25519";
+        identitiesOnly = true;
+        extraOptions = {
+          StrictHostKeyChecking = "no";
+        };
+      };
+
+      "*.lab.beauhilton.com" = {
+        user = "beau";
         identityFile = "~/.ssh/id_ed25519";
         identitiesOnly = true;
         extraOptions = {
