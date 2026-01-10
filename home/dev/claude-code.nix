@@ -3,22 +3,19 @@
   lib,
   ...
 }: {
+  imports = [
+    ./mcp-servers.nix
+  ];
+
   programs = {
     claude-code = {
       enable = true;
       package = pkgs.claude-code;
-      mcpServers.nixos = {
-        command = "nix";
-        args = ["run" "github:utensils/mcp-nixos" "--"];
-      };
+      # MCP servers are now managed in mcp-servers.nix
+      # and written directly to ~/.claude.json
     };
-    mcp = {
-      enable = true;
-      servers.nixos = {
-        command = "nix";
-        args = ["run" "github:utensils/mcp-nixos" "--"];
-      };
-    };
+    # Removed programs.mcp - it writes to ~/.config/mcp/mcp.json
+    # but Claude Code looks in ~/.claude.json
     zsh.shellAliases.cc = "claude-code";
     bash.shellAliases.cc = "claude-code";
   };
