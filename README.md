@@ -9,7 +9,7 @@ Personal NixOS flake with home-manager integration.
 ├── flake.nix                 # Entry point, defines hosts
 ├── hosts/
 │   ├── common.nix            # Shared NixOS config
-│   └── mu/                   # Host: ThinkPad X1 Carbon
+│   └── mu/                   # Host: ThinkPad P16s
 │       ├── configuration.nix # Host entry point
 │       ├── default.nix       # Power/hardware settings
 │       ├── display.nix       # Hyprland system config
@@ -144,17 +144,20 @@ sops secrets/secrets.yaml
 # - etc.
 ```
 
-Home-manager secrets are defined in `home/secrets/default.nix` and use templates for config files that need secrets substituted at activation time.
+Home-manager secrets are defined in `home/secrets/default.nix`
+and use templates for config files that need secrets substituted at activation time.
 
 ## Package Organization
 
 Packages are split into categorized, alphabetized files:
 
 **System packages** (`shared/packages/`):
+
 - `cli.nix` - CLI tools
 - `desktop.nix` - Desktop apps
 - `dev.nix` - Development tools
 
 **Home packages** (`home/packages/`):
+
 - `cli.nix`, `compression.nix`, `desktop.nix`, `dev.nix`
 - `fonts.nix`, `media.nix`, `monitoring.nix`, `network.nix`
