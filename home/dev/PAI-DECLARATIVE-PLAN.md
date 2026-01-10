@@ -161,15 +161,18 @@ src/nixos/home/dev/
 
 ## Implementation Steps
 
-1. [ ] Create `home/dev/pai-hooks/` directory
-2. [ ] Copy hook .ts files from ~/.claude/hooks/ to pai-hooks/
-3. [ ] Create `home/dev/pai-files/` directory
-4. [ ] Copy skill .md files from ~/.claude/skills/CORE/ to pai-files/
-5. [ ] Update pai.nix to use home.file with .source
-6. [ ] Test with `nh os switch`
-7. [ ] Verify hooks still work after restart
+1. [x] Create `home/dev/pai-hooks/` directory ✅ 2026-01-09
+2. [x] Copy hook .ts files from ~/.claude/hooks/ to pai-hooks/ ✅ 2026-01-09
+3. [x] Create `home/dev/pai-files/` directory ✅ 2026-01-09
+4. [x] Copy skill .md files from ~/.claude/skills/CORE/ to pai-files/ ✅ 2026-01-09
+5. [x] Update pai.nix to use home.file with .source ✅ 2026-01-09
+6. [x] Test with `nh os switch` ✅ 2026-01-09
+7. [x] Verify hooks still work after restart ✅ 2026-01-09
 8. [ ] Delete ~/.claude and rebuild to test full declarative flow
 9. [ ] Commit all changes
+
+**Note:** Browser skill is now declarative too! Source stored in `pai-skills/Browser/`,
+copied to `~/.claude/skills/Browser/` on activation with `bun install` for dependencies.
 
 ---
 
