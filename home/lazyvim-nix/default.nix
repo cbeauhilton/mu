@@ -26,8 +26,6 @@ in {
     # (still toggleable with <leader>uh and <leader>ud)
     config.options = ''
       vim.g.lazyvim_picker = "snacks"
-      vim.lsp.inlay_hint.enable(false)
-      vim.diagnostic.config({ virtual_text = false })
     '';
 
     # Extra packages for tools not mapped by lazyvim-nix
@@ -156,6 +154,20 @@ in {
           {
             "joerdav/templ.vim",
             ft = "templ",
+          },
+        }
+      '';
+
+      # Disable inlay hints and virtual diagnostics by default
+      # (still toggleable with <leader>uh and <leader>ud)
+      lsp-defaults = ''
+        return {
+          {
+            "neovim/nvim-lspconfig",
+            opts = {
+              inlay_hints = { enabled = false },
+              diagnostics = { virtual_text = false },
+            },
           },
         }
       '';
