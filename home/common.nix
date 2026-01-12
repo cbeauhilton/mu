@@ -6,18 +6,11 @@
     ./dev
     ./lazyvim-nix
     ./media
-    # ./nvim # Disabled in favor of lazyvim-nix
     ./packages
     ./secrets
     ./shell
     ./work
   ];
-
-  # Disabled: lazyvim-nix manages nvim config declaratively
-  # home.file.".config/nvim" = {
-  #   source = ./nvim;
-  #   recursive = true;
-  # };
 
   fonts.fontconfig.enable = true;
 

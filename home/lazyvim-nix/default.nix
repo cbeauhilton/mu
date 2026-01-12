@@ -22,6 +22,14 @@ in {
     # Core dependencies (LSPs, formatters, etc.)
     installCoreDependencies = true;
 
+    # Custom options - disable inlay hints and virtual diagnostics by default
+    # (still toggleable with <leader>uh and <leader>ud)
+    config.options = ''
+      vim.g.lazyvim_picker = "snacks"
+      vim.lsp.inlay_hint.enable(false)
+      vim.diagnostic.config({ virtual_text = false })
+    '';
+
     # Extra packages for tools not mapped by lazyvim-nix
     extraPackages = with pkgs; [
       vscode-langservers-extracted # jsonls, html, css, eslint
