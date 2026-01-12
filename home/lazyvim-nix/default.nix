@@ -38,10 +38,7 @@ in {
           enable = true;
           installDependencies = true;
         };
-        haskell = {
-          enable = true;
-          installDependencies = true;
-        };
+        haskell.enable = true;
         nix = {
           enable = true;
           installDependencies = true;
@@ -51,10 +48,7 @@ in {
           enable = true;
           installDependencies = true;
         };
-        json = {
-          enable = true;
-          installDependencies = true;
-        };
+        json.enable = true;
         go = {
           enable = true;
           installDependencies = true;
@@ -71,10 +65,7 @@ in {
           enable = true;
           installDependencies = true;
         };
-        tailwind = {
-          enable = true;
-          installDependencies = true;
-        };
+        tailwind.enable = true;
       };
       coding = {
         mini-surround.enable = true;

@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: let
   # PAI Configuration
@@ -13,16 +14,18 @@
     # elevenLabsVoiceId = "";
   };
 
+  # Use actual home directory path (not $HOME which causes double-expansion issues)
+  paiDir = "${config.home.homeDirectory}/.claude";
+
   # Environment variables for settings.json
   paiEnv = {
     DA = paiConfig.daName;
     TIME_ZONE = paiConfig.timeZone;
-    PAI_DIR = "$HOME/.claude";
+    PAI_DIR = paiDir;
     PAI_SOURCE_APP = paiConfig.daName;
   };
 
   # PAI Hooks configuration
-  # Uses $PAI_DIR which is expanded at runtime by Claude Code
   paiHooks = {
     SessionStart = [
       {
@@ -30,11 +33,11 @@
         hooks = [
           {
             type = "command";
-            command = "bun run $PAI_DIR/hooks/initialize-session.ts";
+            command = "bun run ${paiDir}/hooks/initialize-session.ts";
           }
           {
             type = "command";
-            command = "bun run $PAI_DIR/hooks/load-core-context.ts";
+            command = "bun run ${paiDir}/hooks/load-core-context.ts";
           }
         ];
       }
@@ -45,7 +48,7 @@
         hooks = [
           {
             type = "command";
-            command = "bun run $PAI_DIR/hooks/security-validator.ts";
+            command = "bun run ${paiDir}/hooks/security-validator.ts";
           }
         ];
       }
@@ -56,7 +59,7 @@
         hooks = [
           {
             type = "command";
-            command = "bun run $PAI_DIR/hooks/update-tab-titles.ts";
+            command = "bun run ${paiDir}/hooks/update-tab-titles.ts";
           }
         ];
       }

@@ -10,7 +10,6 @@ in {
       keyFile = "/home/${username}/.config/sops/age/keys.txt";
       sshKeyPaths = [
         "/home/${username}/.ssh/id_ed25519"
-        "/home/${username}/.ssh/id_rsa"
         "/home/${username}/.ssh/id_ed25519_pve"
       ];
     };
