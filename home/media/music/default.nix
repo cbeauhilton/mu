@@ -7,7 +7,7 @@
   options.media.music.enable = lib.mkEnableOption "Mopidy music server and ncmpcpp";
 
   config = lib.mkIf config.media.music.enable (let
-    musicDir = "/home/beau/media/music";
+    musicDir = "${config.home.homeDirectory}/media/music";
   in {
     home.packages = with pkgs; [
       mopidy-subidy

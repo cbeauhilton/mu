@@ -61,6 +61,7 @@ in {
     };
   };
 
+  # Personal machine with physical security - passwordless sudo for convenience
   security.sudo.wheelNeedsPassword = false;
 
   services = {
@@ -98,6 +99,7 @@ in {
 
   nixpkgs.config = {
     allowUnfree = true;
+    # Required by adafruit-nrfutil for flashing Meshtastic devices (T1000-E)
     permittedInsecurePackages = ["python3.13-ecdsa-0.19.1"];
   };
 
