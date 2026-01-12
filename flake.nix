@@ -37,6 +37,7 @@
     nur.url = "github:nix-community/nur";
     ags.url = "github:aylur/ags";
     claude-code.url = "github:sadjow/claude-code-nix";
+    lazyvim.url = "github:pfassina/lazyvim-nix";
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland";
     hyprgrass = {
