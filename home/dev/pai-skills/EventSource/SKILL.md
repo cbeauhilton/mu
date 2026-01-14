@@ -3,9 +3,21 @@ name: EventSource
 description: SQLite event sourcing for progress tracking. USE WHEN starting complex tasks, multi-step work, or when asked to track progress. Current state = f(events).
 ---
 
-# EventSource - SQLite Progress Tracking
+# EventSource - Automatic Event Sourcing
 
-**Current state is a function of events.** Never store mutable state directly - store events and derive state.
+**Events are captured automatically via hooks.** No manual logging required.
+
+---
+
+## How It Works
+
+1. **UserPromptSubmit** → Creates a new slice (logs `slice_started` event)
+2. **PostToolUse** → Derives current slice from events, logs tool execution
+3. **SessionStop** → Marks session end
+
+Events are stored per-project: `~/.claude/events/{project}.db`
+
+**Pure ES**: Current slice is derived by querying the latest `slice_started` event for the session - no mutable state files.
 
 ---
 
@@ -13,339 +25,159 @@ description: SQLite event sourcing for progress tracking. USE WHEN starting comp
 
 1. **Events are immutable facts** — Something happened. Record it. Never update or delete.
 2. **State is derived** — Current state = fold(events). Always reconstructable.
-3. **Audit trail built-in** — Every change is recorded with timestamp.
-4. **Simple tooling** — SQLite + shell. No servers, no complexity.
-5. **Project-scoped** — Every event belongs to a project for easy filtering.
+3. **Slices are vertical** — Each user prompt starts a slice; all resulting events belong to it.
+4. **Automatic capture** — Hooks log events; you focus on work.
+5. **Project-scoped** — Every event belongs to a project DB.
 
 ---
 
-## Quick Start
+## Schema
 
-### Initialize Event Store
-
-```bash
-sqlite3 ~/.claude/events/progress.db <<'EOF'
-CREATE TABLE IF NOT EXISTS events (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    timestamp TEXT DEFAULT (datetime('now')),
-    project TEXT NOT NULL,
-    session_id TEXT NOT NULL,
-    event_type TEXT NOT NULL,
-    entity_type TEXT NOT NULL,
+```sql
+CREATE TABLE events (
+    id INTEGER PRIMARY KEY,
+    event_id TEXT UNIQUE,      -- UUIDv7
+    timestamp TEXT,
+    session_id TEXT,           -- Correlation across slices
+    slice_id TEXT,             -- Vertical slice (one user request)
+    event_type TEXT,
+    entity_type TEXT,
     entity_id TEXT,
     data JSON,
-    metadata JSON
+    tags JSON                  -- Flexible filtering
 );
-CREATE INDEX IF NOT EXISTS idx_project ON events(project);
-CREATE INDEX IF NOT EXISTS idx_session ON events(session_id);
-CREATE INDEX IF NOT EXISTS idx_type ON events(event_type);
-CREATE INDEX IF NOT EXISTS idx_entity ON events(entity_type, entity_id);
-EOF
-```
-
-### Detect Project
-
-```bash
-# Auto-detect from git root, fallback to current directory name
-PROJECT=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")
-SESSION_ID="${PROJECT}-$(date +%Y%m%d-%H%M%S)"
-```
-
-### Log Events
-
-```bash
-# Detect project and session
-PROJECT=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")
-SESSION_ID="${PROJECT}-$(date +%Y%m%d-%H%M%S)"
-
-# Session started
-sqlite3 ~/.claude/events/progress.db "INSERT INTO events
-(project, session_id, event_type, entity_type, entity_id, data) VALUES
-('$PROJECT', '$SESSION_ID', 'session_started', 'session', '$SESSION_ID',
-json_object('goal', 'Build feature X', 'context', 'User requested...'));"
-
-# Task started
-sqlite3 ~/.claude/events/progress.db "INSERT INTO events
-(project, session_id, event_type, entity_type, entity_id, data) VALUES
-('$PROJECT', '$SESSION_ID', 'task_started', 'task', 'research',
-json_object('task', 'Research existing code'));"
-
-# Task completed
-sqlite3 ~/.claude/events/progress.db "INSERT INTO events
-(project, session_id, event_type, entity_type, entity_id, data) VALUES
-('$PROJECT', '$SESSION_ID', 'task_completed', 'task', 'research',
-json_object('result', 'Found 3 relevant files'));"
-
-# File created/modified
-sqlite3 ~/.claude/events/progress.db "INSERT INTO events
-(project, session_id, event_type, entity_type, entity_id, data) VALUES
-('$PROJECT', '$SESSION_ID', 'file_created', 'file', 'src/feature.go',
-json_object('lines', 150, 'purpose', 'Main feature implementation'));"
 ```
 
 ---
 
-## Event Types
+## Auto-Captured Events
 
-| Event Type | Entity Type | Purpose |
-|------------|-------------|---------|
-| `session_started` | session | Begin tracking a task |
-| `session_completed` | session | Task finished |
-| `task_started` | task | Sub-task begun |
-| `task_completed` | task | Sub-task finished |
-| `task_blocked` | task | Hit a blocker |
-| `resource_fetched` | doc/url | Fetched external resource |
-| `file_created` | file | Created new file |
-| `file_modified` | file | Modified existing file |
-| `file_deleted` | file | Deleted file |
-| `error_encountered` | task/file | Hit an error |
-| `decision_made` | decision | Recorded a design decision |
-| `question_asked` | question | Asked user a question |
-| `answer_received` | question | Got user response |
+| Event Type | Entity Type | When |
+|------------|-------------|------|
+| `slice_started` | slice | User sends a prompt |
+| `file_created` | file | Write tool |
+| `file_modified` | file | Edit tool |
+| `command_executed` | command | Bash (significant commands) |
+| `resource_fetched` | url | WebFetch |
+| `web_searched` | search | WebSearch |
+| `task_spawned` | task | Task tool |
+| `todos_updated` | todos | TodoWrite |
+| `session_stopped` | session | Session ends |
+
+**Filtered out** (too noisy): Read, Glob, Grep, LSP, trivial bash commands (ls, cat, echo)
 
 ---
 
 ## Query Patterns
 
-### By Project
+### Using event-query.ts
 
-```sql
--- All events for a specific project
-SELECT * FROM events
-WHERE project = 'nats-dcb'
-ORDER BY timestamp DESC;
+```bash
+# List all projects with events
+bun ~/.claude/hooks/event-query.ts projects
 
--- Recent activity per project
-SELECT
-    project,
-    COUNT(*) as events,
-    MAX(timestamp) as last_activity
-FROM events
-GROUP BY project
-ORDER BY last_activity DESC;
+# Project status (files, commands, summary)
+bun ~/.claude/hooks/event-query.ts status nixos
+
+# Latest slice events
+bun ~/.claude/hooks/event-query.ts slice
+
+# Recent activity across projects
+bun ~/.claude/hooks/event-query.ts recent 7
 ```
 
-### Current Session Events
+### Direct SQL
+
 ```sql
-SELECT * FROM events
-WHERE session_id = 'your-session-id'
+-- Files modified today
+SELECT entity_id, COUNT(*) as edits
+FROM events
+WHERE event_type IN ('file_created', 'file_modified')
+  AND timestamp > datetime('now', '-1 day')
+GROUP BY entity_id;
+
+-- Slice timeline (what happened in a slice)
+SELECT timestamp, event_type, entity_id
+FROM events
+WHERE slice_id = 'your-slice-id'
 ORDER BY timestamp;
-```
 
-### Task Status (Derived State)
-```sql
--- Tasks that started but didn't complete (for a project)
-SELECT entity_id as task,
-       MAX(CASE WHEN event_type = 'task_started' THEN timestamp END) as started,
-       MAX(CASE WHEN event_type = 'task_completed' THEN timestamp END) as completed
+-- Commands that failed
+SELECT timestamp, json_extract(data, '$.command') as cmd
 FROM events
-WHERE project = 'my-project' AND entity_type = 'task'
-GROUP BY entity_id
-HAVING completed IS NULL;
-```
+WHERE event_type = 'command_executed'
+  AND json_extract(data, '$.success') = 0;
 
-### Files Modified in Project
-```sql
-SELECT DISTINCT entity_id as file,
-       json_extract(data, '$.purpose') as purpose,
-       MAX(timestamp) as last_modified
-FROM events
-WHERE project = 'my-project'
-  AND event_type IN ('file_created', 'file_modified')
-GROUP BY entity_id
-ORDER BY last_modified DESC;
-```
-
-### Project Summary
-```sql
+-- Recent slices with their events
 SELECT
-    event_type,
-    COUNT(*) as count
-FROM events
-WHERE project = 'my-project'
-GROUP BY event_type
-ORDER BY count DESC;
-```
-
-### Recent Sessions (All Projects)
-```sql
-SELECT
-    project,
-    session_id,
-    MIN(timestamp) as started,
-    MAX(timestamp) as last_activity,
-    json_extract(data, '$.goal') as goal
-FROM events
-WHERE event_type = 'session_started'
-GROUP BY session_id
-ORDER BY started DESC
+    e.slice_id,
+    s.timestamp as started,
+    json_extract(s.data, '$.prompt_preview') as prompt,
+    COUNT(e.id) as events
+FROM events e
+JOIN events s ON s.slice_id = e.slice_id AND s.event_type = 'slice_started'
+GROUP BY e.slice_id
+ORDER BY s.timestamp DESC
 LIMIT 10;
 ```
 
-### Cross-Project Activity (This Week)
-```sql
-SELECT
-    project,
-    COUNT(*) as events,
-    COUNT(DISTINCT session_id) as sessions
-FROM events
-WHERE timestamp > datetime('now', '-7 days')
-GROUP BY project
-ORDER BY events DESC;
+---
+
+## Vertical Slices
+
+A **slice** represents one user request and all the work that results from it:
+
 ```
+User: "Add dark mode to the settings page"
+  └── slice_started
+      ├── file_modified: src/settings.tsx
+      ├── file_modified: src/theme.ts
+      ├── file_created: src/hooks/useDarkMode.ts
+      ├── command_executed: bun test
+      └── todos_updated: (3 completed)
+```
+
+Benefits:
+- Clear audit trail per request
+- Easy to see what a single prompt accomplished
+- Natural unit for velocity tracking
 
 ---
 
-## Workflow
+## Cross-Project Queries
 
-### At Task Start
-
-1. Detect project: `PROJECT=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")`
-2. Generate session ID: `SESSION_ID="${PROJECT}-$(date +%Y%m%d-%H%M%S)"`
-3. Create event store if needed
-4. Log `session_started` with goal and context
-
-### During Task
-
-Log events as you work:
-- Starting/completing sub-tasks
-- Fetching resources
-- Creating/modifying files
-- Encountering errors
-- Making decisions
-
-### At Task End
-
-1. Log `session_completed`
-2. Query for summary if needed
-
----
-
-## Helper Script
-
-Create `~/.local/bin/evlog`:
+To query across all projects:
 
 ```bash
-#!/bin/bash
-# Usage: evlog <event_type> <entity_type> <entity_id> '<json_data>'
-# Project auto-detected from git root or cwd
-# Session ID from EVLOG_SESSION env var or auto-generated
+# Show recent activity
+bun ~/.claude/hooks/event-query.ts recent 7
 
-DB="${EVLOG_DB:-$HOME/.claude/events/progress.db}"
-PROJECT="${EVLOG_PROJECT:-$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")}"
-SESSION="${EVLOG_SESSION:-${PROJECT}-$(date +%Y%m%d-%H%M%S)}"
-
-EVENT_TYPE="$1"
-ENTITY_TYPE="$2"
-ENTITY_ID="$3"
-DATA="${4:-'{}'}"
-
-sqlite3 "$DB" "INSERT INTO events (project, session_id, event_type, entity_type, entity_id, data)
-VALUES ('$PROJECT', '$SESSION', '$EVENT_TYPE', '$ENTITY_TYPE', '$ENTITY_ID', json('$DATA'));"
-
-echo "[$PROJECT] $EVENT_TYPE: $ENTITY_TYPE/$ENTITY_ID"
-```
-
-Then use:
-```bash
-# Auto-detects project from git
-evlog task_completed task research '{"findings": "..."}'
-
-# Or set session for multiple events
-export EVLOG_SESSION="my-feature-20260110"
-evlog task_started task implementation '{}'
-evlog file_created file "src/new.go" '{"lines": 50}'
-evlog task_completed task implementation '{}'
+# Or manually:
+for db in ~/.claude/events/*.db; do
+  echo "=== $(basename $db .db) ==="
+  sqlite3 $db "SELECT COUNT(*) FROM events WHERE timestamp > datetime('now', '-7 days')"
+done
 ```
 
 ---
 
 ## Integration with TodoWrite
 
-EventSource complements TodoWrite:
+- **TodoWrite** → Real-time task visibility for the user
+- **EventSource** → Persistent audit log, automatic capture
 
-- **TodoWrite** — User-visible task list, real-time status
-- **EventSource** — Persistent audit log, reconstructable history
-
-Use both:
-1. TodoWrite for current task visibility
-2. EventSource for permanent record per project
-
-```bash
-# When completing a todo, also log the event
-evlog task_completed task "fix-auth-bug" '{"resolution": "Updated token refresh"}'
-# Then update TodoWrite
-```
-
----
-
-## Example Session
-
-```bash
-# Detect project and start session
-PROJECT=$(basename "$(git rev-parse --show-toplevel 2>/dev/null || pwd)")
-SESSION="${PROJECT}-refactor-auth-$(date +%Y%m%d)"
-export EVLOG_SESSION="$SESSION"
-
-# Start
-evlog session_started session "$SESSION" \
-  '{"goal": "Refactor auth module", "files": ["auth.go", "middleware.go"]}'
-
-# Research phase
-evlog task_started task research '{"task": "Read existing auth code"}'
-# ... do research ...
-evlog task_completed task research '{"findings": "Current impl uses JWT, need refresh tokens"}'
-
-# Implementation
-evlog file_modified file "auth.go" '{"changes": "Added refresh token generation"}'
-
-# Complete
-evlog session_completed session "$SESSION" '{"outcome": "Auth refactored with refresh tokens"}'
-```
-
----
-
-## Migration (Existing DBs)
-
-If you have an existing database without the project column:
-
-```sql
--- Add column
-ALTER TABLE events ADD COLUMN project TEXT;
-
--- Create index
-CREATE INDEX IF NOT EXISTS idx_project ON events(project);
-
--- Backfill (set a default or derive from session_id)
-UPDATE events SET project = 'legacy' WHERE project IS NULL;
--- Or parse from session_id if it contains project name:
--- UPDATE events SET project = substr(session_id, 1, instr(session_id, '-')-1) WHERE project IS NULL;
-```
-
----
-
-## Why SQLite?
-
-1. **Zero dependencies** — Already on every system
-2. **File-based** — Easy to backup, inspect, share
-3. **SQL queries** — Flexible state derivation
-4. **JSON support** — Structured event data
-5. **ACID** — Reliable writes
+Both are useful. TodoWrite shows current state; EventSource records history.
 
 ---
 
 ## Anti-Patterns
 
 **DON'T:**
-- Update events (they're immutable facts)
-- Delete events (use compensating events instead)
-- Store derived state (always reconstruct from events)
-- Use complex event schemas (keep it simple)
-- Forget to set project (use auto-detection)
+- Manually log events (hooks do this)
+- Update events (they're immutable)
+- Store derived state (reconstruct from events)
 
 **DO:**
-- Log generously (storage is cheap)
-- Include context in events
-- Use consistent event type naming
-- Query to derive current state
-- Filter by project for focused views
+- Query to understand project history
+- Use slices to correlate related work
+- Let hooks capture automatically
