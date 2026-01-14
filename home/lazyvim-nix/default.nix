@@ -3,10 +3,15 @@
 {
   inputs,
   pkgs,
+  theme,
   ...
 }: let
   # Build tree-sitter-datastar
   tree-sitter-datastar = pkgs.callPackage ./tree-sitter-datastar.nix {};
+
+  # Colorscheme configuration based on theme
+  isSelenized = builtins.hasAttr "variant" theme.nvim && theme.nvim.plugin == "selenized";
+  isGruvbox = theme.nvim.plugin == "gruvbox";
 in {
   imports = [inputs.lazyvim.homeManagerModules.default];
 
@@ -22,10 +27,18 @@ in {
     # Core dependencies (LSPs, formatters, etc.)
     installCoreDependencies = true;
 
-    # Custom options - disable inlay hints and virtual diagnostics by default
-    # (still toggleable with <leader>uh and <leader>ud)
+    # Custom options
     config.options = ''
       vim.g.lazyvim_picker = "snacks"
+      -- Disable diagnostics by default (toggle with <leader>ud)
+      vim.diagnostic.enable(false)
+      -- Colorscheme variant (matches terminal/stylix: ${theme.name})
+      ${
+        if theme.nvim.variant != null
+        then ''vim.g.selenized_variant = "${theme.nvim.variant}"''
+        else "-- no variant needed for ${theme.name}"
+      }
+      vim.cmd.colorscheme("${theme.nvim.colorscheme}")
     '';
 
     # Extra packages for tools not mapped by lazyvim-nix
@@ -80,6 +93,35 @@ in {
 
     # Custom plugins
     plugins = {
+      # Colorscheme plugins - both included so switching is just a config change
+      gruvbox = ''
+        return {
+          "ellisonleao/gruvbox.nvim",
+          lazy = ${
+          if isGruvbox
+          then "false"
+          else "true"
+        },
+          priority = 1000,
+          opts = {
+            contrast = "hard",
+          },
+        }
+      '';
+
+      selenized = ''
+        return {
+          "selenized.nvim",
+          dir = "${pkgs.vimPlugins.selenized-nvim}",
+          lazy = ${
+          if isSelenized
+          then "false"
+          else "true"
+        },
+          priority = 1000,
+        }
+      '';
+
       claudecode = ''
         return {
           "coder/claudecode.nvim",
@@ -158,15 +200,13 @@ in {
         }
       '';
 
-      # Disable inlay hints and virtual diagnostics by default
-      # (still toggleable with <leader>uh and <leader>ud)
+      # Disable inlay hints by default (toggle with <leader>uh)
       lsp-defaults = ''
         return {
           {
             "neovim/nvim-lspconfig",
             opts = {
               inlay_hints = { enabled = false },
-              diagnostics = { virtual_text = false },
             },
           },
         }

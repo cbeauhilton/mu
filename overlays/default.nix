@@ -3,4 +3,5 @@
   inputs.claude-code.overlays.default
   inputs.nur.overlays.default
   (import ./mcp-nats.nix)
+  (import ./selenized-nvim.nix)
 ]

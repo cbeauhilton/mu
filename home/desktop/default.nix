@@ -8,6 +8,7 @@
     ./ghostty
     ./hyprland
     ./rofi
+    # ./stylix  # TODO: re-enable once Qt compatibility is fixed
     ./waybar
     ./xremap
     ./zathura
