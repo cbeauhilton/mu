@@ -38,6 +38,10 @@
     ags.url = "github:aylur/ags";
     claude-code.url = "github:sadjow/claude-code-nix";
     lazyvim.url = "github:pfassina/lazyvim-nix";
+    stylix = {
+      url = "github:danth/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     hyprland.url = "git+https://github.com/hyprwm/Hyprland";
     hyprgrass = {
@@ -83,6 +87,8 @@
     };
 
     monitorsLib = import ./lib/monitors.nix {inherit (nixpkgs) lib;};
+    themeLib = import ./lib/theme.nix {};
+    theme = themeLib.default; # Change this to switch themes globally
   in {
     checks.${system} = {
       inherit pre-commit-check;
@@ -111,11 +117,14 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = {
-                inherit inputs pkgs;
+                inherit inputs pkgs theme themeLib;
                 monitors = monitorsLib.hosts.mu;
                 inherit monitorsLib;
               };
-              users.beau.imports = [./home/hosts/mu.nix];
+              users.beau.imports = [
+                # inputs.stylix.homeModules.stylix  # TODO: re-enable once Qt compatibility is fixed
+                ./home/hosts/mu.nix
+              ];
             };
           }
         ];
