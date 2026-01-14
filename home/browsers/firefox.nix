@@ -22,6 +22,7 @@
         # ninja-cookie # auto-declines non-essential cookies
         privacy-badger
         rsshub-radar
+        single-file
         stylus
         theater-mode-for-youtube
         ublock-origin
