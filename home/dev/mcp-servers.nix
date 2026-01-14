@@ -1,6 +1,7 @@
 {
   pkgs,
   lib,
+  config,
   ...
 }: let
   # MCP Server definitions
@@ -23,7 +24,21 @@
       #   NATS_NO_AUTHENTICATION = "true";
       # };
     };
+
+    # Karakeep MCP - bookmark manager integration
+    # API key loaded from sops at activation time
+    karakeep = {
+      command = "npx";
+      args = ["@karakeep/mcp"];
+      env = {
+        KARAKEEP_API_ADDR = "https://karakeep.lab.beauhilton.com";
+        KARAKEEP_API_KEY = "__KARAKEEP_API_KEY_PLACEHOLDER__";
+      };
+    };
   };
+
+  # Path to karakeep API key secret (from sops)
+  karakeepApiKeyPath = config.sops.secrets.karakeep_api_key.path;
 
   # Convert to JSON for merging into ~/.claude.json
   mcpServersJson = builtins.toJSON {inherit mcpServers;};
@@ -36,7 +51,7 @@ in {
   ];
 
   # Activation script to merge mcpServers into ~/.claude.json
-  home.activation.configureMcpServers = lib.hm.dag.entryAfter ["writeBoundary"] ''
+  home.activation.configureMcpServers = lib.hm.dag.entryAfter ["writeBoundary" "sops-nix"] ''
     CLAUDE_CONFIG="$HOME/.claude.json"
 
     # Ensure the file exists with at least an empty object
@@ -44,8 +59,20 @@ in {
       echo '{}' > "$CLAUDE_CONFIG"
     fi
 
+    # Read karakeep API key from sops secret
+    KARAKEEP_KEY=""
+    if [ -f "${karakeepApiKeyPath}" ]; then
+      KARAKEEP_KEY=$(cat "${karakeepApiKeyPath}")
+    fi
+
+    # Build the servers JSON with the actual API key substituted
+    SERVERS_JSON='${mcpServersJson}'
+    if [ -n "$KARAKEEP_KEY" ]; then
+      SERVERS_JSON=$(echo "$SERVERS_JSON" | ${pkgs.gnused}/bin/sed "s/__KARAKEEP_API_KEY_PLACEHOLDER__/$KARAKEEP_KEY/g")
+    fi
+
     # Merge mcpServers into the existing config, preserving other settings
-    ${pkgs.jq}/bin/jq --argjson servers '${mcpServersJson}' \
+    ${pkgs.jq}/bin/jq --argjson servers "$SERVERS_JSON" \
       '. * $servers' "$CLAUDE_CONFIG" > "$CLAUDE_CONFIG.tmp" \
       && mv "$CLAUDE_CONFIG.tmp" "$CLAUDE_CONFIG"
 

@@ -16,6 +16,7 @@
     secrets = {
       naviterm_password = {};
       subidy_password = {};
+      karakeep_api_key = {};
     };
 
     # Templates for config files that need secrets substituted
