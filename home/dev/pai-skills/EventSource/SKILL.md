@@ -9,6 +9,47 @@ description: SQLite event sourcing for progress tracking. USE WHEN starting comp
 
 ---
 
+## Quick Reference (READ THIS FIRST)
+
+**Database Location:** `~/.claude/events/{project}.db`
+
+**Timestamps:** Stored as ISO strings (e.g., `2026-01-14 01:54:42`). NO conversion needed.
+
+**Quick Queries:**
+```bash
+# Use the CLI tool (recommended)
+bun ~/.claude/hooks/event-query.ts status       # Current project status
+bun ~/.claude/hooks/event-query.ts projects     # List all project DBs
+
+# Direct SQLite (timestamps are already strings!)
+sqlite3 ~/.claude/events/es-demo-go.db "
+  SELECT timestamp, event_type, entity_id
+  FROM events
+  ORDER BY timestamp DESC
+  LIMIT 10
+"
+
+# Last session's work
+sqlite3 ~/.claude/events/PROJECT.db "
+  SELECT timestamp, event_type, entity_id,
+         json_extract(data, '$.prompt_preview') as prompt
+  FROM events
+  WHERE session_id = (
+    SELECT session_id FROM events
+    WHERE event_type = 'slice_started'
+    ORDER BY timestamp DESC LIMIT 1 OFFSET 1
+  )
+  ORDER BY timestamp
+"
+```
+
+**Common Mistakes:**
+- ❌ Looking in `~/.claude/project.db` (wrong: use `~/.claude/events/project.db`)
+- ❌ Using `datetime(timestamp/1000, 'unixepoch')` (wrong: timestamps are already ISO strings)
+- ❌ Manual queries when CLI exists (use `event-query.ts` for common patterns)
+
+---
+
 ## How It Works
 
 1. **UserPromptSubmit** → Creates a new slice (logs `slice_started` event)
