@@ -61,7 +61,7 @@
         hooks = [
           {
             type = "command";
-            command = "bun run ${paiDir}/hooks/repo-clone-encourager.ts";
+            command = "bun run ${paiDir}/hooks/local-repo-resolver.ts";
           }
         ];
       }
