@@ -4,7 +4,7 @@
   config,
   ...
 }: let
-  # PAI Configuration
+  # PAI Configuration (hooks: security, uv-python, local-repo-resolver)
   paiConfig = {
     daName = "Timn";
     userName = "Beau";
@@ -53,6 +53,10 @@
           {
             type = "command";
             command = "bun run ${paiDir}/hooks/security-validator.ts";
+          }
+          {
+            type = "command";
+            command = "bun run ${paiDir}/hooks/uv-python-interceptor.ts";
           }
         ];
       }
