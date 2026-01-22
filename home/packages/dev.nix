@@ -6,5 +6,6 @@
     ansible-lint
     python312Packages.ansible-vault-rw
     terraform-providers.nbering_ansible
+    watchman
   ];
 }
