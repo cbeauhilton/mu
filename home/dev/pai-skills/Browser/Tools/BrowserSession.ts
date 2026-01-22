@@ -244,7 +244,7 @@ const server = Bun.serve({
         browser.getConsoleLogs({ clear: true })
         browser.clearNetworkLogs()
 
-        await browser.navigate(body.url, { waitUntil: body.waitUntil || 'networkidle' })
+        await browser.navigate(body.url, { waitUntil: body.waitUntil || 'domcontentloaded' })
         await saveState()
 
         return success({
