@@ -4,9 +4,10 @@
 
 set -euo pipefail
 
-SOCKET_PATH="/tmp/claude-mcp-browser-bridge-${USER}"
+SOCKET_PATH="${TMPDIR:-/tmp}/claude-mcp-browser-bridge-${USER}"
 MAX_WAIT_SECONDS=30
 CHROME_CMD="${CHROME_CMD:-google-chrome-stable}"
+WLRCTL_CMD="${WLRCTL_CMD:-wlrctl}"
 
 log() {
     echo "[ChromeLauncher] $*" >&2
@@ -52,6 +53,17 @@ is_extension_ready() {
     [[ -S "$SOCKET_PATH" ]]
 }
 
+wake_extension() {
+    # Send Alt+C to activate the Claude extension, triggering connectNative()
+    if command -v "$WLRCTL_CMD" &>/dev/null; then
+        log "Waking extension with Alt+C..."
+        "$WLRCTL_CMD" keyboard type alt+c
+        sleep 1
+    else
+        log "wlrctl not found - please manually click the Claude extension icon"
+    fi
+}
+
 wait_for_extension() {
     local waited=0
     log "Waiting for Claude in Chrome extension (max ${MAX_WAIT_SECONDS}s)..."
@@ -77,7 +89,10 @@ launch_chrome() {
     disown
 
     # Give Chrome a moment to start
-    sleep 2
+    sleep 3
+
+    # Wake the extension to trigger connectNative()
+    wake_extension
 }
 
 main() {
@@ -117,7 +132,7 @@ main() {
                 launch_chrome
             else
                 log "Chrome running but extension not connected"
-                log "Try opening a new tab or check the extension is enabled"
+                wake_extension
             fi
 
             if wait_for_extension; then

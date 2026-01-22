@@ -12,6 +12,7 @@
     pavucontrol
     showmethekey
     sqlitebrowser
+    wlrctl
     zotero
   ];
 }
