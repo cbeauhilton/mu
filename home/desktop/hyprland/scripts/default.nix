@@ -10,4 +10,5 @@
   screenshotAreaScript = import ./media/screenshot-area.nix {inherit pkgs inputs;};
   screenshotActiveScript = import ./media/screenshot-active.nix {inherit pkgs inputs;};
   screenshotOutputScript = import ./media/screenshot-output.nix {inherit pkgs inputs;};
+  screenshotClaudeScript = import ./media/screenshot-claude.nix {inherit pkgs inputs;};
 }

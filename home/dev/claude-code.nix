@@ -231,6 +231,9 @@ in {
         source = ./pai-skills/ChromeLauncher/launch-chrome.sh;
         executable = true;
       };
+
+      # Screenshot skill - Hyprland desktop capture for Claude
+      ".claude/skills/Screenshot/SKILL.md".source = ./pai-skills/Screenshot/SKILL.md;
     };
 
     # Activation scripts for mutable directories and runtime setup

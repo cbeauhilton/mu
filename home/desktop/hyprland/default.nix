@@ -22,6 +22,7 @@ in {
     pipes # terminal screensaver. For fun.
     asciiquarium-transparent # another
     jq # for the toggleLaptopScreen script, just in case it's not already installed
+    scripts.screenshotClaudeScript # screenshot tool for Claude
   ];
 
   # make stuff work on wayland
