@@ -155,6 +155,12 @@ in {
         source = ./pai-skills/EventSource;
         recursive = true;
       };
+
+      # ChromeLauncher skill - launch Chrome for Claude in Chrome extension
+      ".claude/skills/ChromeLauncher" = {
+        source = ./pai-skills/ChromeLauncher;
+        recursive = true;
+      };
     };
 
     # Activation script to:
@@ -210,6 +216,11 @@ in {
 
       # Create events directory (for event-store hook)
       mkdir -p "$PAI_DIR/events"
+
+      # Make ChromeLauncher script executable
+      if [ -f "$PAI_DIR/skills/ChromeLauncher/launch-chrome.sh" ]; then
+        chmod +x "$PAI_DIR/skills/ChromeLauncher/launch-chrome.sh"
+      fi
 
       # Install Browser skill with dependencies
       BROWSER_SRC="$HOME/.local/share/pai-skills/Browser"
