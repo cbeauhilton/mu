@@ -156,6 +156,7 @@ in {
       "$mainMod" = "SUPER";
       bind = [
         "$mainMod, return, exec, ${terminal}"
+        "$mainMod SHIFT, return, exec, ${scripts.terminalHere}/bin/terminal-here"
         "SHIFT CTRL, return, exec, ${terminal}" # in case, for whatever reason, SUPER isn't recognized
 
         "$mainMod, q, killactive,"
