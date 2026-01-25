@@ -11,6 +11,11 @@
     timeZone = "America/Chicago";
   };
 
+  # MCP Server toggles
+  mcpEnabled = {
+    chromeExtension = false; # Disabled - unreliable
+  };
+
   paiDir = "${config.home.homeDirectory}/.claude";
 in {
   programs = {
@@ -22,36 +27,38 @@ in {
       hooksDir = ./pai-hooks;
 
       # MCP Server configuration - written to ~/.claude.json
-      mcpServers = {
-        # NixOS MCP - for querying NixOS options, packages, etc.
-        nixos = {
-          command = "nix";
-          args = ["run" "github:utensils/mcp-nixos" "--"];
-        };
+      mcpServers =
+        {
+          # NixOS MCP - for querying NixOS options, packages, etc.
+          nixos = {
+            command = "nix";
+            args = ["run" "github:utensils/mcp-nixos" "--"];
+          };
 
-        # NATS MCP - for interacting with NATS messaging
-        nats = {
-          command = "${pkgs.mcp-nats}/bin/mcp-nats";
-          args = [];
-        };
+          # NATS MCP - for interacting with NATS messaging
+          nats = {
+            command = "${pkgs.mcp-nats}/bin/mcp-nats";
+            args = [];
+          };
 
-        # Karakeep MCP - bookmark manager integration
-        # API key comes from shell environment (KARAKEEP_API_KEY)
-        karakeep = {
-          command = "npx";
-          args = ["@karakeep/mcp"];
-          env = {
-            KARAKEEP_API_ADDR = "https://karakeep.lab.beauhilton.com";
-            # KARAKEEP_API_KEY inherited from shell environment via sops
+          # Karakeep MCP - bookmark manager integration
+          # API key comes from shell environment (KARAKEEP_API_KEY)
+          karakeep = {
+            command = "npx";
+            args = ["@karakeep/mcp"];
+            env = {
+              KARAKEEP_API_ADDR = "https://karakeep.lab.beauhilton.com";
+              # KARAKEEP_API_KEY inherited from shell environment via sops
+            };
+          };
+        }
+        // lib.optionalAttrs mcpEnabled.chromeExtension {
+          # Claude in Chrome MCP - browser automation
+          claude-in-chrome = {
+            command = "npx";
+            args = ["-y" "@anthropic/claude-in-chrome-mcp@latest"];
           };
         };
-
-        # Claude in Chrome MCP - browser automation
-        claude-in-chrome = {
-          command = "npx";
-          args = ["-y" "@anthropic/claude-in-chrome-mcp@latest"];
-        };
-      };
 
       # Settings - written to ~/.claude/settings.json
       settings = {
@@ -223,13 +230,6 @@ in {
       ".claude/skills/EventSource" = {
         source = ./pai-skills/EventSource;
         recursive = true;
-      };
-
-      # ChromeLauncher skill - launch Chrome for Claude in Chrome extension
-      ".claude/skills/ChromeLauncher/SKILL.md".source = ./pai-skills/ChromeLauncher/SKILL.md;
-      ".claude/skills/ChromeLauncher/launch-chrome.sh" = {
-        source = ./pai-skills/ChromeLauncher/launch-chrome.sh;
-        executable = true;
       };
 
       # Screenshot skill - Hyprland desktop capture for Claude
