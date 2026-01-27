@@ -27,7 +27,7 @@ in {
     # Core dependencies (LSPs, formatters, etc.)
     installCoreDependencies = true;
 
-    # Custom options
+    # Custom options (runs before plugins load - don't set colorscheme here)
     config.options = ''
       vim.g.lazyvim_picker = "snacks"
       -- Disable diagnostics by default (toggle with <leader>ud)
@@ -38,7 +38,6 @@ in {
         then ''vim.g.selenized_variant = "${theme.nvim.variant}"''
         else "-- no variant needed for ${theme.name}"
       }
-      vim.cmd.colorscheme("${theme.nvim.colorscheme}")
     '';
 
     # Extra packages for tools not mapped by lazyvim-nix
@@ -106,6 +105,10 @@ in {
           opts = {
             contrast = "hard",
           },
+          config = function(_, opts)
+            require("gruvbox").setup(opts)
+            vim.cmd.colorscheme("gruvbox")
+          end,
         }
       '';
 
@@ -119,6 +122,9 @@ in {
           else "true"
         },
           priority = 1000,
+          config = function()
+            vim.cmd.colorscheme("selenized")
+          end,
         }
       '';
 
