@@ -258,7 +258,7 @@ in {
         "$mainMod, o, exec, ${scripts.toggleLaptopScreen}/bin/toggle-laptop-screen"
 
         ## toggle volume/mute
-        "$mainMod, Home, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+        "$mainMod, Home, exec, ${scripts.volumeScript}/bin/volume mute"
       ];
 
       bindm = [
@@ -274,11 +274,11 @@ in {
         "$mainMod, up, resizeactive, 0 -20"
         "$mainMod, down, resizeactive, 0 20"
 
-        "$mainMod, Page_Up, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
-        "$mainMod, Page_Down, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        "$mainMod, Page_Up, exec, ${scripts.volumeScript}/bin/volume raise"
+        "$mainMod, Page_Down, exec, ${scripts.volumeScript}/bin/volume lower"
 
-        ", XF86AudioRaiseVolume, exec, wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+"
-        ", XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        ", XF86AudioRaiseVolume, exec, ${scripts.volumeScript}/bin/volume raise"
+        ", XF86AudioLowerVolume, exec, ${scripts.volumeScript}/bin/volume lower"
         ", XF86MonBrightnessUp, exec, brightnessctl set +5%"
         ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
       ];
