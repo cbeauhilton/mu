@@ -130,8 +130,8 @@ const ATTACK_PATTERNS = {
   // Tier 10: PAI-specific protection - Block
   paiProtection: {
     patterns: [
-      /rm.*\.config\/pai/i,                        // Delete PAI config
-      /rm.*\.claude/i,                             // Delete Claude config
+      /\brm\s.*\.config\/pai/i,                    // Delete PAI config
+      /\brm\s.*\.claude/i,                         // Delete Claude config
       /git\s+push.*PAI.*public/i,                  // Push PAI to public
     ],
     action: 'block',
