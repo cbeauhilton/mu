@@ -232,6 +232,12 @@ in {
         recursive = true;
       };
 
+      # Handoff skill - session context transfer
+      ".claude/skills/Handoff" = {
+        source = ./pai-skills/Handoff;
+        recursive = true;
+      };
+
       # Screenshot skill - Hyprland desktop capture for Claude
       ".claude/skills/Screenshot/SKILL.md".source = ./pai-skills/Screenshot/SKILL.md;
     };

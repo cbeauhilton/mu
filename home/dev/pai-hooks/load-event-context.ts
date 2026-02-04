@@ -92,6 +92,16 @@ interface WorkItem {
   context: string;
 }
 
+interface HandoffInfo {
+  timestamp: string;
+  goal: string;
+  done: string;
+  decisions: string;
+  open: string;
+  next: string;
+  context: string;
+}
+
 function buildContext(project: string, db: Database): string {
   const lines: string[] = [];
 
@@ -113,6 +123,68 @@ function buildContext(project: string, db: Database): string {
   lines.push(`Last activity: ${formatTimeAgo(lastSlice.timestamp)}`);
   if (lastSlice.prompt) {
     lines.push(`Last prompt: "${lastSlice.prompt}..."`);
+  }
+
+  // Latest handoff from previous session
+  const handoff = db.query(`
+    SELECT timestamp,
+           json_extract(data, '$.goal') as goal,
+           json_extract(data, '$.done') as done,
+           json_extract(data, '$.decisions') as decisions,
+           json_extract(data, '$.open') as open,
+           json_extract(data, '$.next') as next,
+           json_extract(data, '$.context') as context
+    FROM events
+    WHERE event_type = 'session_handoff'
+    ORDER BY timestamp DESC
+    LIMIT 1
+  `).get() as HandoffInfo | null;
+
+  if (handoff) {
+    lines.push('');
+    lines.push(`Handoff (${formatTimeAgo(handoff.timestamp)}):`);
+    if (handoff.goal) lines.push(`  Goal: ${handoff.goal}`);
+
+    // Parse JSON arrays, fall back to plain string
+    const formatList = (raw: string | null): string[] => {
+      if (!raw) return [];
+      try {
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [String(raw)];
+      } catch {
+        return [String(raw)];
+      }
+    };
+
+    const done = formatList(handoff.done);
+    if (done.length > 0) {
+      lines.push('  Done:');
+      for (const d of done) lines.push(`    - ${d}`);
+    }
+
+    const decisions = formatList(handoff.decisions);
+    if (decisions.length > 0) {
+      lines.push('  Decisions:');
+      for (const d of decisions) lines.push(`    - ${d}`);
+    }
+
+    const open = formatList(handoff.open);
+    if (open.length > 0) {
+      lines.push('  Open:');
+      for (const o of open) lines.push(`    - ${o}`);
+    }
+
+    const next = formatList(handoff.next);
+    if (next.length > 0) {
+      lines.push('  Next:');
+      for (const n of next) lines.push(`    - ${n}`);
+    }
+
+    const ctx = formatList(handoff.context);
+    if (ctx.length > 0) {
+      lines.push('  Context:');
+      for (const c of ctx) lines.push(`    - ${c}`);
+    }
   }
 
   // Recent files modified

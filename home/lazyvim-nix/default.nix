@@ -32,6 +32,8 @@ in {
       vim.g.lazyvim_picker = "snacks"
       -- Disable diagnostics by default (toggle with <leader>ud)
       vim.diagnostic.enable(false)
+      -- Don't show trailing spaces as visible characters
+      vim.opt.listchars:remove("trail")
       -- Colorscheme variant (matches terminal/stylix: ${theme.name})
       ${
         if theme.nvim.variant != null

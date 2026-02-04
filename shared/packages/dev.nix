@@ -13,8 +13,12 @@
     go-task
     lazydocker
     libgcc
+    # NATS stuff
+    nats-server
     natscli
     nats-top
+    nsc
+    nkeys
     neovim
     nodejs # Required for pnpm/npm packages (MCP servers, etc)
     openssl

@@ -9,6 +9,7 @@
 //   bun event-store.ts block "description" --reason "..."
 //   bun event-store.ts complete <work_id>
 //   bun event-store.ts work [--all]
+//   bun event-store.ts handoff '<json>'
 
 import { existsSync, mkdirSync } from 'fs';
 import { join, basename } from 'path';
@@ -472,6 +473,47 @@ function cliListWork(showAll: boolean): void {
   }
 }
 
+function cliHandoff(jsonData: string): void {
+  const project = cliGetProject();
+  const db = getDb(project);
+  const eventId = randomUUIDv7();
+
+  let data: Record<string, any>;
+  try {
+    data = JSON.parse(jsonData);
+  } catch {
+    console.error('Invalid JSON. Expected: {"goal":"...","done":[...],...}');
+    process.exit(1);
+  }
+
+  // Get current session ID from latest slice if available
+  const latestSession = db.query(`
+    SELECT session_id FROM events
+    WHERE event_type = 'slice_started'
+    ORDER BY timestamp DESC LIMIT 1
+  `).get() as { session_id: string } | null;
+
+  const sessionId = latestSession?.session_id || 'cli';
+
+  db.run(
+    `INSERT INTO events (event_id, session_id, slice_id, event_type, entity_type, entity_id, data, tags)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      eventId,
+      sessionId,
+      null,
+      'session_handoff',
+      'handoff',
+      eventId,
+      JSON.stringify(data),
+      JSON.stringify(['handoff'])
+    ]
+  );
+  db.close();
+
+  console.log(`Handoff stored: ${eventId.substring(0, 8)}`);
+}
+
 function runCli(): boolean {
   const args = process.argv.slice(2);
   if (args.length === 0) return false;
@@ -479,7 +521,7 @@ function runCli(): boolean {
   const cmd = args[0];
 
   // Check if this looks like a CLI command vs hook stdin
-  if (!['queue', 'block', 'complete', 'work', 'list'].includes(cmd)) {
+  if (!['queue', 'block', 'complete', 'work', 'list', 'handoff'].includes(cmd)) {
     return false;
   }
 
@@ -522,6 +564,16 @@ function runCli(): boolean {
     case 'list': {
       const showAll = args.includes('--all') || args.includes('-a');
       cliListWork(showAll);
+      break;
+    }
+
+    case 'handoff': {
+      const jsonData = args[1];
+      if (!jsonData) {
+        console.error('Usage: event-store.ts handoff \'{"goal":"...","done":[...],...}\'');
+        process.exit(1);
+      }
+      cliHandoff(jsonData);
       break;
     }
   }
