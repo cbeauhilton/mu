@@ -208,6 +208,9 @@ in {
       # Force overwrite settings.json (managed by programs.claude-code.settings)
       ".claude/settings.json".force = true;
 
+      # User-level CLAUDE.md (applies to all projects)
+      ".claude/CLAUDE.md".source = ./pai-files/CLAUDE.md;
+
       # CORE skill files
       ".claude/skills/CORE/SKILL.md".source = ./pai-files/SKILL.md;
       ".claude/skills/CORE/Contacts.md".source = ./pai-files/Contacts.md;
