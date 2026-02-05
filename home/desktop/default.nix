@@ -4,6 +4,7 @@
   ...
 }: {
   imports = [
+    ./espanso
     ./foot
     ./ghostty
     ./hyprland
