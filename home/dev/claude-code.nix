@@ -84,10 +84,6 @@ in {
                   type = "command";
                   command = "bun run ${paiDir}/hooks/load-core-context.ts";
                 }
-                {
-                  type = "command";
-                  command = "bun run ${paiDir}/hooks/load-event-context.ts";
-                }
               ];
             }
           ];
@@ -122,32 +118,6 @@ in {
                 {
                   type = "command";
                   command = "bun run ${paiDir}/hooks/update-tab-titles.ts";
-                }
-                {
-                  type = "command";
-                  command = "bun run ${paiDir}/hooks/event-store.ts";
-                }
-              ];
-            }
-          ];
-          PostToolUse = [
-            {
-              matcher = "*";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bun run ${paiDir}/hooks/event-store.ts";
-                }
-              ];
-            }
-          ];
-          SessionEnd = [
-            {
-              matcher = "*";
-              hooks = [
-                {
-                  type = "command";
-                  command = "bun run ${paiDir}/hooks/event-store.ts";
                 }
               ];
             }
@@ -229,12 +199,6 @@ in {
         recursive = true;
       };
 
-      # EventSource skill - SQLite event sourcing for progress tracking
-      ".claude/skills/EventSource" = {
-        source = ./pai-skills/EventSource;
-        recursive = true;
-      };
-
       # Handoff skill - session context transfer
       ".claude/skills/Handoff" = {
         source = ./pai-skills/Handoff;
@@ -304,9 +268,6 @@ in {
 
         # Create repos cache directory (for local-repo-resolver hook)
         mkdir -p "$HOME/src/.repos"
-
-        # Create events directory (for event-store hook)
-        mkdir -p "$PAI_DIR/events"
       '';
 
       # Install Browser skill with dependencies (needs bun install)

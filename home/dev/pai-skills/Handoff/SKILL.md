@@ -1,11 +1,11 @@
 ---
 name: Handoff
-description: Session handoff for context continuity. USE WHEN ending a session, switching context, or user says /handoff. Generates structured summary and persists to event store.
+description: Session handoff for context continuity. USE WHEN ending a session, switching context, or user says /handoff. Generates structured summary and persists to project memory.
 ---
 
 # Handoff - Session Context Transfer
 
-**Generates a structured handoff and persists it to the event store for the next session.**
+**Generates a structured handoff and writes it to the project's auto-memory so the next session picks it up automatically.**
 
 ---
 
@@ -62,32 +62,21 @@ Output a structured summary using this format:
 - "Context" is for things that would cause confusion without explanation
 - Skip any section that's empty — don't pad
 
-### 3. Persist to Event Store
+### 3. Persist to Project Memory
 
-After generating and showing the handoff to the user, store it:
+Write the handoff to the project's auto-memory file using the Write tool:
 
-```bash
-bun ~/.claude/hooks/event-store.ts handoff '<json>'
+```
+~/.claude/projects/{project-path}/memory/HANDOFF.md
 ```
 
-Where `<json>` is a JSON object with the handoff fields:
+The project path mirrors the working directory with `-` replacing `/` (e.g. `-home-beau-src-nixos`). This file auto-loads into the system prompt on the next session.
 
-```json
-{
-  "goal": "string",
-  "done": ["string", "..."],
-  "decisions": ["string", "..."],
-  "open": ["string", "..."],
-  "next": ["string", "..."],
-  "context": ["string", "..."]
-}
-```
-
-The event store persists this as a `session_handoff` event. The next session's `load-event-context.ts` hook will automatically surface it in the resume context.
+If a previous handoff exists, **replace it** — only the latest handoff matters.
 
 ### 4. Confirm
 
-Tell the user the handoff is stored. Session is safe to end.
+Tell the user the handoff is stored in project memory. The next session (or `claude --continue`) will see it automatically.
 
 ---
 
