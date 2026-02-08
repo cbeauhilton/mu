@@ -207,6 +207,9 @@ in {
 
       # Screenshot skill - Hyprland desktop capture for Claude
       ".claude/skills/Screenshot/SKILL.md".source = ./pai-skills/Screenshot/SKILL.md;
+
+      # Chart review skill - agent-driven chart QA via JSON API
+      ".claude/skills/chart-review/SKILL.md".source = ./pai-skills/chart-review/SKILL.md;
     };
 
     # Activation scripts for mutable directories and runtime setup
