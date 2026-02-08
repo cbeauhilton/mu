@@ -1,24 +1,24 @@
-_: {
-  # Enable printing
-  services.printing.enable = true;
+{pkgs, ...}: {
+  services.printing = {
+    enable = true;
+    drivers = [pkgs.brlaser];
+  };
 
-  # Enable network discovery of printers
   services.avahi = {
     enable = true;
     nssmdns4 = true;
     openFirewall = true;
   };
 
-  # Your printer
   hardware.printers = {
     ensurePrinters = [
       {
-        name = "HP_OfficeJet_Pro_9010";
+        name = "Brother_MFC_L8900CDW";
         location = "Home Office";
-        deviceUri = "ipp://192.168.1.88/ipp/print";
+        deviceUri = "ipp://BRN94DDF861A2A8.local/ipp/print";
         model = "everywhere";
       }
     ];
-    ensureDefaultPrinter = "HP_OfficeJet_Pro_9010";
+    ensureDefaultPrinter = "Brother_MFC_L8900CDW";
   };
 }

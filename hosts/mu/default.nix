@@ -8,7 +8,7 @@ in {
       then ../../shared/networking/iwd.nix
       else ../../shared/networking/networkmanager.nix
     )
-    # ../../shared/printers.nix
+    ../../shared/printers.nix
   ];
 
   boot.kernelParams = [
