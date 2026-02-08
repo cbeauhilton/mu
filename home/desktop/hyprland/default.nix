@@ -176,7 +176,7 @@ in {
 
         # GUIs
         "$mainMod, w, exec, ${browser}"
-        "$mainMod, g, exec, flatpak run com.heroicgameslauncher.hgl"
+        # "$mainMod, g, exec, flatpak run com.heroicgameslauncher.hgl"
         # "$mainMod SHIFT, r, exec, thunar"
 
         # webapps
@@ -259,6 +259,9 @@ in {
 
         ## toggle volume/mute
         "$mainMod, Home, exec, ${scripts.volumeScript}/bin/volume mute"
+
+        ## clip clipboard to discord knowledge base
+        "$mainMod SHIFT, d, exec, ${scripts.discordClipScript}/bin/discord-clip"
       ];
 
       bindm = [

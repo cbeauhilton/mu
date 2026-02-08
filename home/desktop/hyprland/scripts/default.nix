@@ -12,4 +12,5 @@
   screenshotOutputScript = import ./media/screenshot-output.nix {inherit pkgs inputs;};
   screenshotClaudeScript = import ./media/screenshot-claude.nix {inherit pkgs inputs;};
   volumeScript = import ./system/volume.nix {inherit pkgs;};
+  discordClipScript = import ./system/discord-clip.nix {inherit pkgs;};
 }
