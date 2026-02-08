@@ -62,10 +62,14 @@
     enable = true;
     userDirs = {
       createDirectories = true;
+      documents = "${config.home.homeDirectory}/docs";
       download = "${config.home.homeDirectory}/dl";
       music = "${config.home.homeDirectory}/media/music";
       videos = "${config.home.homeDirectory}/media/videos";
       pictures = "${config.home.homeDirectory}/media/images";
+      desktop = config.home.homeDirectory;
+      templates = config.home.homeDirectory;
+      publicShare = config.home.homeDirectory;
       extraConfig.XDG_SCREENSHOTS_DIR = "${config.home.homeDirectory}/media/images/screenshots";
     };
     desktopEntries.firefox = {
