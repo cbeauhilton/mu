@@ -2,6 +2,11 @@
   services.espanso = {
     enable = true;
     package = pkgs.espanso-wayland;
+    configs = {
+      default = {
+        show_notifications = false;
+      };
+    };
     matches = {
       pai = {
         matches = [
