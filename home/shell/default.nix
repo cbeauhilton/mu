@@ -1,4 +1,4 @@
-{...}: {
+{config, ...}: {
   imports = [
     ./atuin
     ./ssh
@@ -10,7 +10,10 @@
     sessionVariables = {
       EDITOR = "nvim";
       BROWSER = "firefox";
-      TERMINAL = "ghostty";
+      TERMINAL =
+        if config.custom.ghostty.enable
+        then "ghostty"
+        else "foot";
       BAT_PAGER = "ov -F -H3";
       DELTA_PAGER = "ov --section-delimiter '^(commit|added:|removed:|renamed:|Δ)' --section-header --pattern '•'";
       MANPAGER = "ov";
