@@ -297,6 +297,67 @@ Note: `data-bind` on file inputs sends base64-encoded content.
 
 ---
 
+## Morph Initialization Boundary
+
+Datastar only initializes `data-*` attributes on elements present at initial
+page load. Elements delivered via SSE morph (`datastar-patch-elements`) get
+their DOM updated but Datastar does **not** re-run plugin initialization on
+new nodes. This means `data-signals`, `data-bind`, `data-on:*` placed on
+morphed-in elements are inert — they exist as HTML attributes but never fire.
+
+Morph diffs and patches *changed attributes on existing elements*. It does
+not call the initialization pipeline on elements that didn't exist before.
+
+### Delegation pattern
+
+Put all Datastar attributes on a **stable ancestor** — an element that exists
+in the initial HTML shell, not one delivered by SSE:
+
+```html
+<!-- main exists at page load — Datastar initializes it -->
+<main id="app"
+      data-signals:displayName="''"
+      data-on:focusout="
+        if (evt.target.matches('.editable-input')) {
+          $displayName = evt.target.value;
+          @post(evt.target.dataset.postUrl);
+        }
+      "
+      data-on:click="
+        let btn = evt.target.closest('.action-btn');
+        if (btn) { @post(btn.dataset.actionUrl); }
+      ">
+
+  <!-- This entire subtree can be morphed freely.
+       The inputs below have NO data-* attributes — they're
+       plain HTML. The delegation handler on <main> reads
+       their values from evt.target. -->
+  <div id="content" data-init="@get('/stream')">
+    <input class="editable-input"
+           data-post-url="/item/123/rename"
+           value="current name"/>
+    <button class="action-btn"
+            data-action-url="/item/123/delete">Delete</button>
+  </div>
+</main>
+```
+
+### Key rules
+
+- **`focusout` bubbles, `blur` doesn't.** Use `focusout` for delegation on
+  inputs. Same for `focusin` vs `focus`.
+- **Read DOM values directly** — `data-bind` on a morphed input is dead, so
+  read `evt.target.value` in the handler and push to the signal manually.
+- **Server drives canonical state** — the next morph overwrites the input's
+  `value` attribute with whatever the server rendered. The signal is just a
+  transient vehicle for the POST, not the source of truth.
+- **`data-*` on morphed elements for data, not behavior** — plain HTML
+  attributes like `data-post-url` or `data-action-url` survive morphing fine.
+  Only *Datastar-processed* attributes (`data-on:*`, `data-bind`, etc.) are
+  affected by the initialization boundary.
+
+---
+
 ## Northstar Architecture (Canonical)
 
 ```

@@ -110,10 +110,32 @@ When reviewing a chart's `option` JSON:
 
 ---
 
+## URL Patterns
+
+Announcements are accessed by **hash ID** (SHA256 of FDA URL, first 16 bytes hex-encoded), NOT by NCT ID.
+
+| URL | Description |
+|-----|-------------|
+| `http://localhost:8080/` | Index (all announcements) |
+| `http://localhost:8080/{hashId}` | Announcement detail view |
+| `http://localhost:8080/s/{sessionId}/{hashId}` | Shared session view |
+| `http://localhost:8080/charts` | Chart gallery (devMode) |
+| `http://localhost:8080/charts/reviews` | Chart reviews UI (devMode) |
+
+To find the hash ID for a trial's announcement:
+
+```bash
+curl -s 'localhost:8080/charts/api?pageSize=200' | jq '.trials[] | select(.nctId == "NCT05388669") | .announcementIds'
+```
+
+Then open: `http://localhost:8080/{announcementId}`
+
+---
+
 ## Tips
 
 - Use `jq` for all API interaction — structured output, easy filtering
-- The `option` field is a JSON string (double-encoded) — use `fromjson` in jq to parse it
+- The `option` field is a JSON object (not double-encoded) — access directly in jq
 - Review by category to stay focused: safety charts have different concerns than baseline charts
 - Forest plots: check that CI whiskers and point estimates are correctly positioned
 - Bar charts: check that all arms/groups are represented
