@@ -134,11 +134,30 @@ in {
         return {
           "coder/claudecode.nvim",
           dependencies = { "folke/snacks.nvim" },
-          config = true,
+          opts = {
+            terminal = {
+              provider = "external",
+              provider_opts = {
+                external_terminal_cmd = "foot -e %s",
+              },
+            },
+            terminal_cmd = "claude --dangerously-skip-permissions",
+          },
           keys = {
             { "<leader>ac", "<cmd>ClaudeCode<cr>", desc = "Toggle Claude" },
             { "<leader>af", "<cmd>ClaudeCodeFocus<cr>", desc = "Focus Claude" },
             { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+            { "<leader>aa", function()
+                local tree_fts = { NvimTree = true, ["neo-tree"] = true, oil = true, minifiles = true, netrw = true }
+                if tree_fts[vim.bo.filetype] then
+                  vim.cmd("ClaudeCodeTreeAdd")
+                else
+                  vim.cmd("ClaudeCodeAdd %")
+                end
+              end, desc = "Add to Claude" },
+            { "<leader>ad", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+            { "<leader>ax", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Reject diff" },
+            { "<leader>am", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select model" },
           },
         }
       '';
