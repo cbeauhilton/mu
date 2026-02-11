@@ -35,6 +35,12 @@ in {
             args = ["run" "github:utensils/mcp-nixos" "--"];
           };
 
+          # Serena - semantic code intelligence via LSP
+          serena = {
+            command = "${pkgs.serena}/bin/serena";
+            args = ["start-mcp-server" "--context=claude-code" "--project-from-cwd"];
+          };
+
           # NATS MCP - for interacting with NATS messaging
           nats = {
             command = "${pkgs.mcp-nats}/bin/mcp-nats";

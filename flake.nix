@@ -62,6 +62,10 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    serena = {
+      url = "github:oraios/serena";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     naviterm.url = "gitlab:detoxify92/naviterm";
     pre-commit-hooks = {
       url = "github:cachix/pre-commit-hooks.nix";
