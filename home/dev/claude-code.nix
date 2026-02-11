@@ -224,7 +224,7 @@ in {
       claudeStableLink = lib.hm.dag.entryAfter ["writeBoundary"] ''
         mkdir -p $HOME/.local/bin
         rm -f $HOME/.local/bin/claude $HOME/.local/bin/claude-bun
-        ln -s ${pkgs.claude-code}/bin/claude $HOME/.local/bin/claude
+        ln -s ${config.programs.claude-code.finalPackage}/bin/claude $HOME/.local/bin/claude
         ln -s ${pkgs.claude-code-bun}/bin/claude-bun $HOME/.local/bin/claude-bun
       '';
 
