@@ -216,6 +216,21 @@ in {
 
       # Chart review skill - agent-driven chart QA via JSON API
       ".claude/skills/chart-review/SKILL.md".source = ./pai-skills/chart-review/SKILL.md;
+
+      # Data Cultist skill - Datastar zealot persona
+      ".claude/skills/data-cultist" = {
+        source = ./pai-skills/data-cultist;
+        recursive = true;
+      };
+
+      # NATS Operator skill - JetStream/KV/Object Store expertise
+      ".claude/skills/nats" = {
+        source = ./pai-skills/nats;
+        recursive = true;
+      };
+
+      # TRON skill - wire format expertise (HAMT, vector tries, COW)
+      ".claude/skills/tron/SKILL.md".source = ./pai-skills/tron/SKILL.md;
     };
 
     # Activation scripts for mutable directories and runtime setup
