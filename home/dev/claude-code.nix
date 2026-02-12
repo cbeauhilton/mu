@@ -47,6 +47,12 @@ in {
             args = [];
           };
 
+          # Context7 MCP - up-to-date library docs in context
+          context7 = {
+            command = "npx";
+            args = ["-y" "@upstash/context7-mcp@latest"];
+          };
+
           # Karakeep MCP - bookmark manager integration
           # API key comes from shell environment (KARAKEEP_API_KEY)
           karakeep = {
