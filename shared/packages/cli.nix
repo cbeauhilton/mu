@@ -8,6 +8,7 @@
     gh
     git
     gping # Ping with a graph
+    hcloud
     just
     sops
     statix

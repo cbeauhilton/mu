@@ -1,4 +1,4 @@
-{
+{lib, ...}: {
   services.ssh-agent.enable = true;
 
   programs.ssh = {
@@ -51,14 +51,27 @@
         identitiesOnly = true;
       };
 
-      proxmox = {
+      hl15 = {
         hostname = "10.0.0.42";
         user = "root";
-        identityFile = "~/.ssh/id_ed25519_pve";
+        identityFile = "~/.ssh/id_ed25519";
         identitiesOnly = true;
       };
 
-      "forgejo.lab.beauhilton.com" = {
+      hl15-ts = {
+        hostname = "100.122.210.6";
+        user = "root";
+        identityFile = "~/.ssh/id_ed25519";
+        identitiesOnly = true;
+      };
+
+      caddy-jump = {
+        hostname = "10.0.0.150";
+        user = "root";
+        identityFile = "~/.ssh/id_ed25519";
+      };
+
+      "forgejo.lab.beauhilton.com" = lib.hm.dag.entryBefore ["*.lab.beauhilton.com"] {
         hostname = "forgejo.lab.beauhilton.com";
         user = "git";
         identityFile = "~/.ssh/id_ed25519";
@@ -72,6 +85,7 @@
         user = "beau";
         identityFile = "~/.ssh/id_ed25519";
         identitiesOnly = true;
+        proxyJump = "caddy-jump";
         extraOptions = {
           StrictHostKeyChecking = "no";
         };
