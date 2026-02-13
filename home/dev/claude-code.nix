@@ -13,7 +13,12 @@
 
   # MCP Server toggles
   mcpEnabled = {
-    chromeExtension = false; # Disabled - unreliable
+    nixos = true;
+    serena = true;
+    context7 = true;
+    karakeep = true;
+    nats = false; # Not helpful yet
+    chromeExtension = false; # Unreliable
   };
 
   paiDir = "${config.home.homeDirectory}/.claude";
@@ -28,44 +33,40 @@ in {
 
       # MCP Server configuration - written to ~/.claude.json
       mcpServers =
-        {
-          # NixOS MCP - for querying NixOS options, packages, etc.
+        lib.optionalAttrs mcpEnabled.nixos {
           nixos = {
             command = "nix";
             args = ["run" "github:utensils/mcp-nixos" "--"];
           };
-
-          # Serena - semantic code intelligence via LSP
+        }
+        // lib.optionalAttrs mcpEnabled.serena {
           serena = {
             command = "${pkgs.serena}/bin/serena";
             args = ["start-mcp-server" "--context=claude-code" "--project-from-cwd"];
           };
-
-          # NATS MCP - for interacting with NATS messaging
-          nats = {
-            command = "${pkgs.mcp-nats}/bin/mcp-nats";
-            args = [];
-          };
-
-          # Context7 MCP - up-to-date library docs in context
+        }
+        // lib.optionalAttrs mcpEnabled.context7 {
           context7 = {
             command = "npx";
             args = ["-y" "@upstash/context7-mcp@latest"];
           };
-
-          # Karakeep MCP - bookmark manager integration
-          # API key comes from shell environment (KARAKEEP_API_KEY)
+        }
+        // lib.optionalAttrs mcpEnabled.karakeep {
           karakeep = {
             command = "npx";
             args = ["@karakeep/mcp"];
             env = {
               KARAKEEP_API_ADDR = "https://karakeep.lab.beauhilton.com";
-              # KARAKEEP_API_KEY inherited from shell environment via sops
             };
           };
         }
+        // lib.optionalAttrs mcpEnabled.nats {
+          nats = {
+            command = "${pkgs.mcp-nats}/bin/mcp-nats";
+            args = [];
+          };
+        }
         // lib.optionalAttrs mcpEnabled.chromeExtension {
-          # Claude in Chrome MCP - browser automation
           claude-in-chrome = {
             command = "npx";
             args = ["-y" "@anthropic/claude-in-chrome-mcp@latest"];
