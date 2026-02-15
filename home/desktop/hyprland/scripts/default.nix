@@ -13,4 +13,6 @@
   screenshotClaudeScript = import ./media/screenshot-claude.nix {inherit pkgs inputs;};
   volumeScript = import ./system/volume.nix {inherit pkgs;};
   discordClipScript = import ./system/discord-clip.nix {inherit pkgs;};
+  resetXremapScript = import ./system/reset-xremap.nix {inherit pkgs;};
+  capslockWatcherScript = import ./system/capslock-watcher.nix {inherit pkgs;};
 }

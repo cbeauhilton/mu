@@ -57,7 +57,10 @@ in {
       inputs.hyprgrass.packages.${pkgs.system}.default
     ];
     settings = {
-      exec-once = ''${scripts.startupScript}/bin/start'';
+      exec-once = [
+        "${scripts.startupScript}/bin/start"
+        "${scripts.capslockWatcherScript}/bin/capslock-watcher"
+      ];
       input = {
         follow_mouse = 1;
         natural_scroll = false;
@@ -262,6 +265,9 @@ in {
 
         ## clip clipboard to discord knowledge base
         "$mainMod SHIFT, d, exec, ${scripts.discordClipScript}/bin/discord-clip"
+
+        ## reset xremap (unstick modifiers after rebuild)
+        "CTRL ALT, Escape, exec, ${scripts.resetXremapScript}/bin/reset-xremap"
       ];
 
       bindm = [
