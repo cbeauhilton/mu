@@ -23,6 +23,9 @@ in {
     asciiquarium-transparent # another
     jq # for the toggleLaptopScreen script, just in case it's not already installed
     scripts.screenshotClaudeScript # screenshot tool for Claude
+    whisper-cpp-vulkan
+    sox
+    wtype
   ];
 
   # make stuff work on wayland
@@ -265,6 +268,12 @@ in {
 
         ## clip clipboard to discord knowledge base
         "$mainMod SHIFT, d, exec, ${scripts.discordClipScript}/bin/discord-clip"
+
+        ## voice input (push-to-talk STT)
+        "$mainMod SHIFT, v, exec, ${scripts.voiceInputScript}/bin/voice-input"
+
+        ## voice stream (chunked live STT)
+        "$mainMod, g, exec, ${scripts.voiceStreamScript}/bin/voice-stream"
 
         ## reset xremap (unstick modifiers after rebuild)
         "CTRL ALT, Escape, exec, ${scripts.resetXremapScript}/bin/reset-xremap"

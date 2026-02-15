@@ -15,4 +15,6 @@
   discordClipScript = import ./system/discord-clip.nix {inherit pkgs;};
   resetXremapScript = import ./system/reset-xremap.nix {inherit pkgs;};
   capslockWatcherScript = import ./system/capslock-watcher.nix {inherit pkgs;};
+  voiceInputScript = import ./system/voice-input.nix {inherit pkgs;};
+  voiceStreamScript = import ./system/voice-stream.nix {inherit pkgs;};
 }
